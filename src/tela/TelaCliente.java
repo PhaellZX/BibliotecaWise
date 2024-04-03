@@ -6,7 +6,11 @@ package tela;
 
 import cliente.Cliente;
 import cliente.ClienteDAO;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -14,13 +18,94 @@ import javax.swing.JOptionPane;
  */
 public class TelaCliente extends javax.swing.JFrame {
 
-    /**
-     * Creates new form TelaCliente_
-     */
+    private DefaultTableModel tableModel;
+    private ClienteDAO clienteDAO;
+    private boolean running;
+    private boolean updateEnabled; 
+    
     public TelaCliente() {
         initComponents();
-    }
+        
+       
+        tableModel = new DefaultTableModel();
+        //tableModel.addColumn("ID");
+        tableModel.addColumn("Nome");
+        tableModel.addColumn("CPF");
+        tableModel.addColumn("Endereço");
+        tableModel.addColumn("Telefone");
+        tabelaCliente.setModel(tableModel);
+        clienteDAO = new ClienteDAO();
+        running = true;
+        updateEnabled = true; // Inicialmente, a atualização está habilitada
+        startDataUpdateThread();
+        
+         tabelaCliente.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int rowIndex = tabelaCliente.getSelectedRow();
+                if (rowIndex != -1) { // Verifica se uma linha foi selecionada
+                    // Obtém os valores da linha selecionada
+                    String nome = tableModel.getValueAt(rowIndex, 0).toString();
+                    String cpf = tableModel.getValueAt(rowIndex, 1).toString();
+                    String endereco = tableModel.getValueAt(rowIndex, 2).toString();
+                    String telefone = tableModel.getValueAt(rowIndex, 3).toString();
 
+                    // Preenche os campos de edição com os valores da linha selecionada
+                    Nome.setText(nome);
+                    Cpf.setText(cpf);
+                    Endereco.setText(endereco);
+                    Telefone.setText(telefone);
+                }
+            }
+        });
+    }
+    
+      private void startDataUpdateThread() {
+        Thread thread = new Thread(() -> {
+            while (running) {
+                if (updateEnabled) {
+                    updateTable();
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+     
+      private void updateTable() {
+        ArrayList<Cliente> clientes = clienteDAO.list();
+        tableModel.setRowCount(0); // Limpar a tabela antes de atualizar
+        for (Cliente cliente : clientes) {
+            
+            tableModel.addRow(new Object[]{cliente.getNome(), cliente.getCpf(), cliente.getEndereco(), cliente.getTelefone()});
+        }
+    }
+    
+      // Método para atualizar a tabela com os dados dos clientes
+    private void atualizarTabelaClientes() {
+        // Parar a atualização da tabela
+        updateEnabled = false;
+
+        // Obtendo o CPF digitado no campo de busca
+        String cpfBusca = buscarCpf.getText();
+
+        // Buscando o cliente pelo CPF
+        Cliente clienteEncontrado = clienteDAO.buscarPorCPF(cpfBusca);// implemente o buscarPorCPF no clienteDAO
+
+        // Verificando se o cliente foi encontrado
+        if (clienteEncontrado != null) {
+            // Limpa a tabela
+            tableModel.setRowCount(0);
+            // Adiciona o cliente encontrado à tabela
+            tableModel.addRow(new Object[]{clienteEncontrado.getNome(), clienteEncontrado.getCpf(), clienteEncontrado.getEndereco(), clienteEncontrado.getTelefone()});
+        } else {
+            JOptionPane.showMessageDialog(this, "Cliente não encontrado!");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,8 +123,8 @@ public class TelaCliente extends javax.swing.JFrame {
         apagar = new javax.swing.JButton();
         voltar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
+        tabelaCliente = new javax.swing.JTable();
+        buscarCpf = new javax.swing.JTextField();
         Nome = new javax.swing.JTextField();
         Cpf = new javax.swing.JTextField();
         Endereco = new javax.swing.JTextField();
@@ -85,7 +170,7 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaCliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -96,13 +181,13 @@ public class TelaCliente extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tabelaCliente);
 
-        jTextField1.setText("Digite o CPF");
-        jTextField1.setName(""); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        buscarCpf.setText("Digite o CPF");
+        buscarCpf.setName(""); // NOI18N
+        buscarCpf.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                buscarCpfActionPerformed(evt);
             }
         });
 
@@ -144,7 +229,7 @@ public class TelaCliente extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buscarCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -158,7 +243,7 @@ public class TelaCliente extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
                         .addComponent(buscar))
-                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(buscarCpf, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -209,11 +294,58 @@ public class TelaCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarActionPerformed
-   
+       int rowIndex = tabelaCliente.getSelectedRow();
+    if (rowIndex != -1) { // Verifica se uma linha foi selecionada
+        // Obtém os novos valores dos campos de edição
+        String nome = Nome.getText();
+        String cpf = Cpf.getText();
+        String endereco = Endereco.getText();
+        String telefone = Telefone.getText();
+
+        // Atualiza os valores da linha selecionada com os novos valores na tabela
+        tableModel.setValueAt(nome, rowIndex, 0);
+        tableModel.setValueAt(cpf, rowIndex, 1);
+        tableModel.setValueAt(endereco, rowIndex, 2);
+        tableModel.setValueAt(telefone, rowIndex, 3);
+
+        // Atualiza o cliente no banco de dados
+        Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
+        cliente.setIdCliente(Integer.parseInt(tableModel.getValueAt(rowIndex, 0).toString())); // Obtém o ID do cliente da tabela
+        ClienteDAO clienteDAO = new ClienteDAO();
+        int rowCount = clienteDAO.update(cliente);
+
+        // Mostra uma mensagem de sucesso ou erro
+        if (rowCount > 0) {
+            JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente!");
+        }
+    } else {
+        // Mostra uma mensagem de erro se nenhuma linha foi selecionada
+        JOptionPane.showMessageDialog(this, "Selecione um cliente para editar.");
+    }
     }//GEN-LAST:event_editarActionPerformed
 
     private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
-        // TODO add your handling code here:
+        // Obtendo o CPF digitado no campo de busca
+    
+    running = false;
+    
+    String cpfBusca = buscarCpf.getText();
+    
+    // Buscando o cliente pelo CPF
+    Cliente clienteEncontrado = clienteDAO.buscarPorCPF(cpfBusca);// implemente o buscarPorCPF no clienteDAO
+    
+    // Verificando se o cliente foi encontrado
+    if (clienteEncontrado != null) {
+        // Limpa a tabela
+        tableModel.setRowCount(0);
+        // Adiciona o cliente encontrado à tabela
+        tableModel.addRow(new Object[]{clienteEncontrado.getNome(), clienteEncontrado.getCpf(), clienteEncontrado.getEndereco(), clienteEncontrado.getTelefone()});
+    } else {
+        JOptionPane.showMessageDialog(this, "Cliente não encontrado!");
+         running = true;
+    }
     }//GEN-LAST:event_buscarActionPerformed
 
     private void voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voltarActionPerformed
@@ -221,6 +353,7 @@ public class TelaCliente extends javax.swing.JFrame {
        new TelaMain().setVisible(true);
     }//GEN-LAST:event_voltarActionPerformed
 
+    
     private void cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarActionPerformed
         // Obtendo os dados dos campos de texto
     String nome = Nome.getText();
@@ -249,9 +382,9 @@ public class TelaCliente extends javax.swing.JFrame {
   
     }//GEN-LAST:event_apagarActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void buscarCpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarCpfActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_buscarCpfActionPerformed
 
     private void EnderecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnderecoActionPerformed
         // TODO add your handling code here:
@@ -300,13 +433,13 @@ public class TelaCliente extends javax.swing.JFrame {
     private javax.swing.JTextField Telefone;
     private javax.swing.JButton apagar;
     private javax.swing.JButton buscar;
+    private javax.swing.JTextField buscarCpf;
     private javax.swing.JButton cadastrar;
     private javax.swing.JButton editar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tabelaCliente;
     private javax.swing.JButton voltar;
     // End of variables declaration//GEN-END:variables
 }

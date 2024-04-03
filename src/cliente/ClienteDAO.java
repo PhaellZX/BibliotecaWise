@@ -97,8 +97,8 @@ public class ClienteDAO {
                  int idCliente = rs.getInt(1);
                  String nome = rs.getString(2);
                  String cpf = rs.getString(3);
-                 String endereco = rs.getString(3);
-                 String telefone = rs.getString(4);
+                 String endereco = rs.getString(4);
+                 String telefone = rs.getString(5);
                  Cliente c = new Cliente(nome, cpf, endereco, telefone);
                  minhaLista.add(c);
              }
@@ -108,4 +108,27 @@ public class ClienteDAO {
          }
          return minhaLista;
      }
+     // Método para buscar um cliente pelo CPF
+    public Cliente buscarPorCPF(String cpf) {
+        try {
+            Connection conn = ConexaoBancoDados.getConexaoMySql();
+            String query = "SELECT * FROM cliente WHERE cpf = ?"; // Consulta SQL para buscar o cliente pelo CPF
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                // Se encontrar o cliente, crie um objeto Cliente com os dados do banco de dados
+                String nome = rs.getString("nome");
+                String endereco = rs.getString("endereco");
+                String telefone = rs.getString("telefone");
+                Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
+                return cliente;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    return null; // Retorna null se o cliente não for encontrado ou ocorrer algum erro
+}
+
 }
