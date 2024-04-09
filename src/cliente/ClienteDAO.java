@@ -51,7 +51,7 @@ public class ClienteDAO {
         try {
             Connection conn = ConexaoBancoDados.getConexaoMySql();
             PreparedStatement ps = conn.prepareStatement("UPDATE cliente SET nome=?, cpf=?, endereco=?, telefone=? WHERE idCliente=?");
-          
+            
             ps.setString(1, c.getNome());
             ps.setString(2, c.getCpf());
             ps.setString(3, c.getEndereco());
@@ -99,7 +99,7 @@ public class ClienteDAO {
                  String cpf = rs.getString(3);
                  String endereco = rs.getString(4);
                  String telefone = rs.getString(5);
-                 Cliente c = new Cliente(nome, cpf, endereco, telefone);
+                 Cliente c = new Cliente(idCliente,nome, cpf, endereco, telefone);
                  minhaLista.add(c);
              }
              conn.close();
@@ -119,10 +119,11 @@ public class ClienteDAO {
 
             if (rs.next()) {
                 // Se encontrar o cliente, crie um objeto Cliente com os dados do banco de dados
+                int idCliente = rs.getInt("idCliente");
                 String nome = rs.getString("nome");
                 String endereco = rs.getString("endereco");
                 String telefone = rs.getString("telefone");
-                Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
+                Cliente cliente = new Cliente(idCliente,nome, cpf, endereco, telefone);
                 return cliente;
             }
         } catch (SQLException ex) {

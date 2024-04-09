@@ -1,8 +1,7 @@
-
 package cliente;
 
 public class Cliente {
-    private static int proxId = 1;
+    private static int cont = 0;
     private int idCliente;
     private String nome;
     private String cpf;
@@ -10,18 +9,22 @@ public class Cliente {
     private String telefone;
 
     public Cliente(String nome, String cpf, String endereco, String telefone) {
-        this.idCliente = proxId++;
+        this.idCliente = ++cont;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
         this.telefone = telefone;
     }
+
     public Cliente(int idCliente, String nome, String cpf, String endereco, String telefone) {
         this.idCliente = idCliente;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
         this.telefone = telefone;
+        if (idCliente > cont) {
+            cont = idCliente;
+        }
     }
 
     public int getIdCliente() {
