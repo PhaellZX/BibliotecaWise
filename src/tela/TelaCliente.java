@@ -8,7 +8,10 @@ import cliente.Cliente;
 import cliente.ClienteDAO;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +25,8 @@ public class TelaCliente extends javax.swing.JFrame {
     private ClienteDAO clienteDAO;
     private boolean running;
     private boolean updateEnabled; 
+    private long startTime;
+    private int selectedRowIndex = -1;
     
     public TelaCliente() {
         initComponents();
@@ -37,6 +42,7 @@ public class TelaCliente extends javax.swing.JFrame {
         clienteDAO = new ClienteDAO();
         running = true;
         updateEnabled = true; // Inicialmente, a atualização está habilitada
+        startTime = System.currentTimeMillis(); // Inicializa o startTime com o momento atual
         startDataUpdateThread();
         
          tabelaCliente.addMouseListener(new MouseAdapter() {
@@ -44,7 +50,6 @@ public class TelaCliente extends javax.swing.JFrame {
     public void mouseClicked(MouseEvent e) {
     int rowIndex = tabelaCliente.getSelectedRow();
     if (rowIndex != -1) {
-        running = false;
         // Obtém os valores da linha selecionada
         String nome = tableModel.getValueAt(rowIndex, 1).toString();
         String cpf = tableModel.getValueAt(rowIndex, 2).toString();
@@ -62,10 +67,24 @@ public class TelaCliente extends javax.swing.JFrame {
         Cpf.setEditable(true);
         Endereco.setEditable(true);
         Telefone.setEditable(true);
+        
+        running = false;
     }
 }
 
 });
+    }
+    
+     // Método para atualizar o tempo de execução na tela
+    private void updateExecutionTime() {
+        long elapsedTime = System.currentTimeMillis() - startTime; // Calcula o tempo decorrido
+       
+        // Formata o tempo decorrido em formato de horas, minutos, segundos e milissegundos
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Configura o fuso horário para evitar problemas de ajuste de horário de verão
+        String formattedTime = dateFormat.format(new Date(elapsedTime));
+
+        tempo.setText(formattedTime); // Atualiza o texto do componente tempo
     }
     
       private void startDataUpdateThread() {
@@ -73,6 +92,7 @@ public class TelaCliente extends javax.swing.JFrame {
             while (running) {
                 if (updateEnabled) {
                     updateTable();
+                    updateExecutionTime();
                 }
                 try {
                     Thread.sleep(1000);
@@ -83,14 +103,19 @@ public class TelaCliente extends javax.swing.JFrame {
         });
         thread.start();
     }
-     
+
       private void updateTable() {
         ArrayList<Cliente> clientes = clienteDAO.list();
-        tableModel.setRowCount(0); // Limpar a tabela antes de atualizar
-        for (Cliente cliente : clientes) {
-            
-            tableModel.addRow(new Object[]{cliente.getIdCliente(), cliente.getNome(), cliente.getCpf(), cliente.getEndereco(), cliente.getTelefone()});
-        }
+    tableModel.setRowCount(0); // Limpar a tabela antes de atualizar
+    for (Cliente cliente : clientes) {
+        tableModel.addRow(new Object[]{cliente.getIdCliente(), cliente.getNome(), cliente.getCpf(), cliente.getEndereco(), cliente.getTelefone()});
+    }
+    
+    // Verifica se a linha selecionada ainda está dentro dos limites da tabela
+    if (selectedRowIndex != -1 && selectedRowIndex < tableModel.getRowCount()) {
+        // Define a seleção da linha para a mesma linha selecionada anteriormente
+        tabelaCliente.setRowSelectionInterval(selectedRowIndex, selectedRowIndex);
+    }
     }
     
       // Método para atualizar a tabela com os dados dos clientes
@@ -138,6 +163,8 @@ public class TelaCliente extends javax.swing.JFrame {
         Endereco = new javax.swing.JTextField();
         Telefone = new javax.swing.JTextField();
         refresh = new javax.swing.JButton();
+        label1 = new java.awt.Label();
+        tempo = new java.awt.Label();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -213,12 +240,16 @@ public class TelaCliente extends javax.swing.JFrame {
 
         Telefone.setText("telefone");
 
-        refresh.setText("refresh");
+        refresh.setText("Refresh");
         refresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshActionPerformed(evt);
             }
         });
+
+        label1.setText("Tempo de Execução das Threads:");
+
+        tempo.setText("label2");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -227,9 +258,6 @@ public class TelaCliente extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(Telefone, javax.swing.GroupLayout.Alignment.LEADING)
@@ -241,7 +269,15 @@ public class TelaCliente extends javax.swing.JFrame {
                             .addComponent(cadastrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(editar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(apagar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(voltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(voltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)
+                                .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -283,9 +319,15 @@ public class TelaCliente extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(Endereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Telefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                        .addComponent(Telefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(label1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tempo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 10, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -308,10 +350,10 @@ public class TelaCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarActionPerformed
-       int rowIndex = tabelaCliente.getSelectedRow();
-    if (rowIndex != -1) { // Verifica se uma linha foi selecionada
-        // Verifica se rowIndex é válido
-        if (rowIndex < tableModel.getRowCount()) {
+        selectedRowIndex = tabelaCliente.getSelectedRow(); // Armazena o índice da linha selecionada
+    if (selectedRowIndex != -1) { // Verifica se uma linha foi selecionada
+        // Verifica se selectedRowIndex é válido
+        if (selectedRowIndex < tableModel.getRowCount()) {
             // Obtém os novos valores dos campos de edição
             String nome = Nome.getText();
             String cpf = Cpf.getText();
@@ -319,39 +361,42 @@ public class TelaCliente extends javax.swing.JFrame {
             String telefone = Telefone.getText();
 
             // Atualiza os valores da linha selecionada com os novos valores na tabela
-            tableModel.setValueAt(nome, rowIndex, 1);
-            tableModel.setValueAt(cpf, rowIndex, 2);
-            tableModel.setValueAt(endereco, rowIndex, 3);
-            tableModel.setValueAt(telefone, rowIndex, 4);
+            tableModel.setValueAt(nome, selectedRowIndex, 1);
+            tableModel.setValueAt(cpf, selectedRowIndex, 2);
+            tableModel.setValueAt(endereco, selectedRowIndex, 3);
+            tableModel.setValueAt(telefone, selectedRowIndex, 4);
 
             // Atualiza o cliente no banco de dados
             Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
-            cliente.setIdCliente(Integer.parseInt(tableModel.getValueAt(rowIndex, 0).toString())); // Obtém o ID do cliente da tabela
+            cliente.setIdCliente(Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString())); // Obtém o ID do cliente da tabela
             ClienteDAO clienteDAO = new ClienteDAO();
             int rowCount = clienteDAO.update(cliente);
 
             // Mostra uma mensagem de sucesso ou erro
             if (rowCount > 0) {
                 JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
-                running = true;
+                startDataUpdateThread();
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente!");
-                 running = true;
+                
             }
         } else {
-            // Mostra uma mensagem de erro se rowIndex for inválido
+            // Mostra uma mensagem de erro se selectedRowIndex for inválido
             JOptionPane.showMessageDialog(this, "Índice de linha inválido!");
-             running = true;
+            
         }
     } else {
         // Mostra uma mensagem de erro se nenhuma linha foi selecionada
         JOptionPane.showMessageDialog(this, "Selecione um cliente para editar.");
-        running = true;
+        
     }
+    running = true;
     }//GEN-LAST:event_editarActionPerformed
 
     private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
     // Obtendo o CPF digitado no campo de busca
+    
+    running = false;
     
     String cpfBusca = buscarCpf.getText();
     
@@ -366,6 +411,8 @@ public class TelaCliente extends javax.swing.JFrame {
         tableModel.addRow(new Object[]{clienteEncontrado.getIdCliente(), clienteEncontrado.getNome(), clienteEncontrado.getCpf(), clienteEncontrado.getEndereco(), clienteEncontrado.getTelefone()});
     } else {
         JOptionPane.showMessageDialog(this, "Cliente não encontrado!");
+         startDataUpdateThread();
+         running = true;
     }
     }//GEN-LAST:event_buscarActionPerformed
 
@@ -393,18 +440,19 @@ public class TelaCliente extends javax.swing.JFrame {
     if (rowCount > 0) {
         // Inserção bem-sucedida
         JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
-        running = true;
+        startDataUpdateThread();
+       
     } else {
         // Inserção falhou
         JOptionPane.showMessageDialog(this, "Erro ao cadastrar cliente!");
-        running = true;
     }
+     running = true;
     }//GEN-LAST:event_cadastrarActionPerformed
 
     private void apagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apagarActionPerformed
-        int rowIndex = tabelaCliente.getSelectedRow();
-    if (rowIndex != -1) { // Verifica se uma linha foi selecionada
-        int idCliente = Integer.parseInt(tableModel.getValueAt(rowIndex, 0).toString()); // Obtém o ID do cliente da tabela
+        selectedRowIndex = tabelaCliente.getSelectedRow(); // Armazena o índice da linha selecionada
+    if (selectedRowIndex != -1) { // Verifica se uma linha foi selecionada
+        int idCliente = Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString()); // Obtém o ID do cliente da tabela
 
         int option = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir o cliente?", "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) { // Confirmação da exclusão
@@ -414,6 +462,7 @@ public class TelaCliente extends javax.swing.JFrame {
             if (rowCount > 0) { // Verifica se a exclusão foi bem-sucedida
                 JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
                 updateTable(); // Atualiza a tabela para refletir a exclusão
+                startDataUpdateThread();
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao excluir cliente!");
             }
@@ -421,6 +470,7 @@ public class TelaCliente extends javax.swing.JFrame {
     } else {
         JOptionPane.showMessageDialog(this, "Selecione um cliente para excluir.");
     }
+    running = true;
     }//GEN-LAST:event_apagarActionPerformed
 
     private void buscarCpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarCpfActionPerformed
@@ -433,6 +483,8 @@ public class TelaCliente extends javax.swing.JFrame {
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
         updateTable(); // Chama o método para atualizar a tabela
+        startDataUpdateThread(); 
+        running = true;
     }//GEN-LAST:event_refreshActionPerformed
 
     /**
@@ -484,8 +536,10 @@ public class TelaCliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private java.awt.Label label1;
     private javax.swing.JButton refresh;
     private javax.swing.JTable tabelaCliente;
+    private java.awt.Label tempo;
     private javax.swing.JButton voltar;
     // End of variables declaration//GEN-END:variables
 }
