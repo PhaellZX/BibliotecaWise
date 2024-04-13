@@ -39,7 +39,7 @@ public class LivroDAO {
                 String autor = rs.getString(4);
                 String genero = rs.getString(5);
                 String disponivel = rs.getString(5);
-                Livro l = new Livro(id, anoPublicacao, titulo, autor, genero);
+                Livro l = new Livro(anoPublicacao, titulo, autor, genero);
                 return l;
             }
             conn.close();
@@ -111,5 +111,28 @@ public class LivroDAO {
          }
          return minhaLista;
      }
+     public Livro buscarPorTitulo(String titulo) {
+        try {
+            Connection conn = ConexaoBancoDados.getConexaoMySql();
+            String query = "SELECT * FROM livro WHERE titulo = ?"; // Consulta SQL para buscar o livro pelo titulo
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, titulo);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                // Se encontrar o livro, crie um objeto Livro com os dados do banco de dados
+                int idLivro = rs.getInt("idLivro");
+                String anoPublicacao = rs.getString("anoPublicacao");
+                String autor = rs.getString("autor");
+                String genero = rs.getString("genero");
+                boolean disponivel = rs.getBoolean("disponivel");
+                Livro livro = new Livro(idLivro , anoPublicacao, titulo, autor, genero, disponivel);
+                return livro;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    return null; // Retorna null se o livro não for encontrado ou ocorrer algum erro
+}
 }
 

@@ -23,23 +23,22 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="819" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="871" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace pref="29" max="32767" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="394" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="287" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jPanel1" min="-2" pref="287" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -54,38 +53,80 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="voltar" alignment="0" min="-2" pref="124" max="-2" attributes="0"/>
-                      <Component id="devolver" alignment="0" min="-2" pref="124" max="-2" attributes="0"/>
-                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="alugar" alignment="0" min="-2" pref="124" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="Titulo" alignment="0" max="32767" attributes="0"/>
+                      <Component id="Cpf" max="32767" attributes="0"/>
+                      <Component id="DataAluguel" max="32767" attributes="0"/>
+                      <Component id="DataDevolucao" pref="264" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" min="-2" pref="598" max="-2" attributes="0"/>
-                  <EmptySpace pref="21" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="devolver" min="-2" pref="113" max="-2" attributes="0"/>
+                      <Component id="alugar" min="-2" pref="113" max="-2" attributes="0"/>
+                      <Component id="voltar" min="-2" pref="113" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jScrollPane2" min="-2" pref="358" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="buscarCpfAluguel" min="-2" pref="231" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="Buscar" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="label1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="tempo" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane2" alignment="0" min="-2" pref="348" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="alugar" min="-2" pref="42" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="devolver" min="-2" pref="42" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="voltar" min="-2" pref="42" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="Cpf" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="alugar" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="devolver" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="Titulo" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="voltar" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="DataAluguel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="DataDevolucao" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="buscarCpfAluguel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="Buscar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="jScrollPane2" min="-2" pref="199" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="28" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="label1" min="-2" max="-2" attributes="0"/>
+                      <Component id="tempo" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="117" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -97,11 +138,6 @@
               <Font name="Segoe UI" size="18" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Aluguel"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Escolha uma das op&#xe7;&#xf5;es"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="alugar">
@@ -135,7 +171,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="jTable2">
+            <Component class="javax.swing.JTable" name="AluguelTabela">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="4" rowCount="4">
@@ -149,6 +185,46 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="java.awt.Label" name="label1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Tempo de Execu&#xe7;&#xe3;o das Threads:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="Cpf">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="CPF"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="Titulo">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Titulo do Livro"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="tempo">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="jLabel2"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="DataAluguel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Data do Aluguel XX/XX/XXXX"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="DataDevolucao">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Data da Devolu&#xe7;&#xe3;o XX/XX/XXXX"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="buscarCpfAluguel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Buscar Aluguel por CPF"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="Buscar">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Buscar"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

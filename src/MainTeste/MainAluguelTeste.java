@@ -69,13 +69,13 @@ public class MainAluguelTeste {
             String dataDevolucao = scanner.nextLine();
 
             Cliente cliente = new Cliente(idCliente, null, null, null, null);
-            Livro livro = new Livro(idLivro, null, null, null, null);
+            //Livro livro = new Livro(idLivro, null, null, null, null);
 
-            Aluguel aluguel = new Aluguel(0, cliente, livro, dataAluguel, dataDevolucao);
+            //Aluguel aluguel = new Aluguel(0, cliente, livro, dataAluguel, dataDevolucao);
             
             // Verificar se o livro está disponível antes de registrar o aluguel
-            if (verificarDisponibilidadeLivro(idLivro)) {
-                int rowCount = aluguelDAO.alugarLivro(aluguel);
+            /*if (verificarDisponibilidadeLivro(idLivro)) {
+                //int rowCount = aluguelDAO.alugarLivro(aluguel);
                 if (rowCount > 0) {
                     System.out.println("Livro alugado com sucesso!");
                 } else {
@@ -83,7 +83,7 @@ public class MainAluguelTeste {
                 }
             } else {
                 System.out.println("Livro indisponível para aluguel.");
-            }
+            }*/
         }
     } while (true); // Loop infinito até que o usuário confirme que deseja alugar um livro disponível
 }

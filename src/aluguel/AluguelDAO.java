@@ -57,7 +57,7 @@ private boolean verificarDisponibilidadeLivro(int idLivro) {
 }
 
     
-     private void atualizarStatusLivro(int idLivro, boolean disponivel) {
+     public void atualizarStatusLivro(int idLivro, boolean disponivel) {
         try (Connection conn = ConexaoBancoDados.getConexaoMySql()) {
             PreparedStatement ps = conn.prepareStatement("UPDATE livro SET disponivel = ? WHERE idLivro = ?");
             ps.setBoolean(1, disponivel);
@@ -172,7 +172,7 @@ private int buscarIdLivroPorIdAluguel(int idAluguel) {
                 String autor = rs.getString(4);
                 String genero = rs.getString(5);
                 String disponivel = rs.getString(5);
-                Livro l = new Livro(idLivro, anoPublicacao, titulo, autor, genero);
+                Livro l = new Livro(anoPublicacao, titulo, autor, genero);
                 return l;
             }
             conn.close();
@@ -181,4 +181,23 @@ private int buscarIdLivroPorIdAluguel(int idAluguel) {
         }
         return null;
 }
+    public boolean livroEstaAlugado(String tituloLivro) {
+    try (Connection conn = ConexaoBancoDados.getConexaoMySql()) {
+        // Consulta SQL para verificar se há registros de aluguel para o livro com o título fornecido
+        String sql = "SELECT COUNT(*) AS count FROM aluguel INNER JOIN livro ON aluguel.idLivro = livro.idLivro WHERE livro.titulo = ?";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, tituloLivro);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            int count = rs.getInt("count");
+            return count > 0; // Retorna true se houver algum registro de aluguel para o livro com o título fornecido
+        }
+    } catch (SQLException ex) {
+        java.util.logging.Logger.getLogger(AluguelDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return false; // Retorna false se ocorrer algum erro ou se não houver registros de aluguel para o livro
+}
+
 }

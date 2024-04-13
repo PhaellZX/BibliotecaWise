@@ -45,7 +45,7 @@ public class TelaCliente extends javax.swing.JFrame {
         startTime = System.currentTimeMillis(); // Inicializa o startTime com o momento atual
         startDataUpdateThread();
         
-         tabelaCliente.addMouseListener(new MouseAdapter() {
+    tabelaCliente.addMouseListener(new MouseAdapter() {
     @Override
     public void mouseClicked(MouseEvent e) {
     int rowIndex = tabelaCliente.getSelectedRow();
@@ -104,7 +104,7 @@ public class TelaCliente extends javax.swing.JFrame {
         thread.start();
     }
 
-      private void updateTable() {
+     private void updateTable() {
         ArrayList<Cliente> clientes = clienteDAO.list();
     tableModel.setRowCount(0); // Limpar a tabela antes de atualizar
     for (Cliente cliente : clientes) {
@@ -248,8 +248,6 @@ public class TelaCliente extends javax.swing.JFrame {
         });
 
         label1.setText("Tempo de Execução das Threads:");
-
-        tempo.setText("label2");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

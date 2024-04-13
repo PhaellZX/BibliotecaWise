@@ -259,9 +259,6 @@
           </Properties>
         </Component>
         <Component class="java.awt.Label" name="tempo">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="label2"/>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>
