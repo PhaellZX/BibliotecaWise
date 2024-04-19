@@ -26,6 +26,10 @@ public class Cliente {
             cont = idCliente;
         }
     }
+    
+    public Cliente(){
+    
+    }
 
     public int getIdCliente() {
         return idCliente;

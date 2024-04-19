@@ -55,8 +55,8 @@
                   <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <Component id="Titulo" alignment="0" max="32767" attributes="0"/>
-                      <Component id="Cpf" max="32767" attributes="0"/>
+                      <Component id="CodigoLivro" alignment="0" max="32767" attributes="0"/>
+                      <Component id="CodigoCliente" max="32767" attributes="0"/>
                       <Component id="DataAluguel" max="32767" attributes="0"/>
                       <Component id="DataDevolucao" pref="264" max="32767" attributes="0"/>
                   </Group>
@@ -95,13 +95,13 @@
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="Cpf" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="CodigoCliente" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="alugar" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="devolver" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="Titulo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="CodigoLivro" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -190,14 +190,14 @@
             <Property name="text" type="java.lang.String" value="Tempo de Execu&#xe7;&#xe3;o das Threads:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="Cpf">
+        <Component class="javax.swing.JTextField" name="CodigoCliente">
           <Properties>
-            <Property name="text" type="java.lang.String" value="CPF"/>
+            <Property name="text" type="java.lang.String" value="C&#xf3;digo do Cliente"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="Titulo">
+        <Component class="javax.swing.JTextField" name="CodigoLivro">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Titulo do Livro"/>
+            <Property name="text" type="java.lang.String" value="C&#xf3;digo do Livro"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="tempo">

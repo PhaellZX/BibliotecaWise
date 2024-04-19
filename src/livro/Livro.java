@@ -24,6 +24,10 @@ public class Livro {
         this.disponivel = disponivel;
     }
   
+    public Livro(){
+    
+    }
+    
     public int getIdLivro() {
         return idLivro;
     }

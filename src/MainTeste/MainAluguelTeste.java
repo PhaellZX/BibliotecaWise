@@ -110,8 +110,8 @@ private static boolean verificarDisponibilidadeLivro(int idLivro) {
         if (!alugueis.isEmpty()) {
             for (Aluguel aluguel : alugueis) {
                 System.out.println("ID Aluguel: " + aluguel.getIdAluguel());
-                System.out.println("Cliente: " + aluguel.getIdCliente().getNome());
-                System.out.println("Livro: " + aluguel.getIdLivro().getTitulo());
+               // System.out.println("Cliente: " + aluguel.getIdCliente().getNome());
+                //System.out.println("Livro: " + aluguel.getIdLivro().getTitulo());
                 System.out.println("Data de Aluguel: " + aluguel.getDataAluguel());
                 System.out.println("Data de Devolução: " + aluguel.getDataDevolucao());
                 System.out.println("-------------------------");

@@ -5,29 +5,42 @@ import livro.Livro;
 
 public class Aluguel {
     private int idAluguel;
-    private Cliente idCliente;
-    private Livro idLivro;
+    private Cliente cliente;
+    private Livro livro;
     private String dataAluguel;
     private String dataDevolucao;
 
-    public Aluguel(int idAluguel, Cliente idCliente, Livro idLivro, String dataAluguel, String dataDevolucao) {
+    public Aluguel(int idAluguel, Cliente cliente, Livro livro, String dataAluguel, String dataDevolucao) {
         this.idAluguel = idAluguel;
-        this.idCliente = idCliente;
-        this.idLivro = idLivro;
+        this.cliente = cliente;
+        this.livro = livro;
         this.dataAluguel = dataAluguel;
         this.dataDevolucao = dataDevolucao;
     }
 
+
+    public Aluguel(Cliente cliente, Livro livro, String dataAluguel, String dataDevolucao) {
+      this.cliente = cliente;
+      this.livro = livro;
+      this.dataAluguel = dataAluguel;
+      this.dataDevolucao = dataDevolucao;
+   }
+
+    
+    public Aluguel(){
+        
+    }
+    
     public int getIdAluguel() {
         return idAluguel;
     }
 
-    public Cliente getIdCliente() {
-        return idCliente;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public Livro getIdLivro() {
-        return idLivro;
+    public Livro getLivro() {
+        return livro;
     }
 
     public String getDataAluguel() {
@@ -42,12 +55,12 @@ public class Aluguel {
         this.idAluguel = idAluguel;
     }
 
-    public void setIdCliente(Cliente idCliente) {
-        this.idCliente = idCliente;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     public void setIdLivro(Livro idlivro) {
-        this.idLivro = idLivro;
+        this.livro = livro;
     }
 
     public void setDataAluguel(String dataAluguel) {
@@ -60,6 +73,7 @@ public class Aluguel {
     //Só para testes
     @Override
     public String toString() {
-        return "Aluguel{" + "idAluguel=" + idAluguel + ", idCliente=" + idCliente + ", idLivro=" + idLivro + ", dataAluguel=" + dataAluguel + ", dataDevolucao=" + dataDevolucao + '}';
+        return "Aluguel{" + "idAluguel=" + idAluguel + ", idCliente=" + cliente + ", idLivro=" + livro + ", dataAluguel=" + dataAluguel + ", dataDevolucao=" + dataDevolucao + '}';
     }   
+
 }
