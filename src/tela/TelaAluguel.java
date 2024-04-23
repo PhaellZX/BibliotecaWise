@@ -7,6 +7,12 @@ package tela;
 import aluguel.Aluguel;
 import aluguel.AluguelDAO;
 import cliente.Cliente;
+import com.mysql.cj.xdevapi.Client;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 import livro.Livro;
 
 
@@ -16,10 +22,46 @@ import livro.Livro;
  */
 public class TelaAluguel extends javax.swing.JFrame {
     
+    private DefaultTableModel tableModel;
+    private AluguelDAO aluguelDAO;
     
     public TelaAluguel() {
         initComponents();
+        
+          tableModel = new DefaultTableModel();
+          tableModel.addColumn("idAluguel");
+          tableModel.addColumn("idCliente");
+          tableModel.addColumn("idLivro");
+          tableModel.addColumn("dataAluguel");
+          tableModel.addColumn("datadevolucao");
+          TabelaAluguel.setModel(tableModel);
+          aluguelDAO = new AluguelDAO();
       
+          TabelaAluguel.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+                  int rowIndex = TabelaAluguel.getSelectedRow();
+    if (rowIndex != -1) {
+        // Obtém os valores da linha selecionada
+        String idAluguel = tableModel.getValueAt(rowIndex, 1).toString();
+        String idCliente = tableModel.getValueAt(rowIndex, 2).toString();
+        String idLivro = tableModel.getValueAt(rowIndex, 3).toString();
+        String dataAluguel = tableModel.getValueAt(rowIndex, 4).toString();
+        String dataDevolucao = tableModel.getValueAt(rowIndex, 5).toString();
+
+        // Preenche os campos de edição com os valores da linha selecionada
+        idAluguel.setText(idAluguel);
+        C.setText(cpf);
+        Endereco.setText(endereco);
+        Telefone.setText(telefone);
+
+        // Habilita a edição dos campos de texto
+        Nome.setEditable(true);
+        Cpf.setEditable(true);
+        Endereco.setEditable(true);
+        Telefone.setEditable(true);
+       
+                  }
     }
     
     /**
@@ -37,7 +79,7 @@ public class TelaAluguel extends javax.swing.JFrame {
         devolver = new javax.swing.JButton();
         voltar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        AluguelTabela = new javax.swing.JTable();
+        TabelaAluguel = new javax.swing.JTable();
         label1 = new java.awt.Label();
         CodigoCliente = new javax.swing.JTextField();
         CodigoLivro = new javax.swing.JTextField();
@@ -73,7 +115,7 @@ public class TelaAluguel extends javax.swing.JFrame {
             }
         });
 
-        AluguelTabela.setModel(new javax.swing.table.DefaultTableModel(
+        TabelaAluguel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -84,7 +126,7 @@ public class TelaAluguel extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(AluguelTabela);
+        jScrollPane2.setViewportView(TabelaAluguel);
 
         label1.setText("Tempo de Execução das Threads:");
 
@@ -198,49 +240,57 @@ public class TelaAluguel extends javax.swing.JFrame {
     }//GEN-LAST:event_voltarActionPerformed
 
     private void devolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolverActionPerformed
-
+    
     }//GEN-LAST:event_devolverActionPerformed
 
     private void alugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alugarActionPerformed
-      String cpf = CodigoCliente.getText(); // Obter CPF do campo de texto
-        String tituloLivro = CodigoLivro.getText(); // Obter título do livro do campo de texto
-        String dataAluguel = DataAluguel.getText(); // Obter data de aluguel do campo de texto
-        String dataDevolucao = DataDevolucao.getText(); // Obter data de devolução do campo de texto
+              // Obter o texto dos campos de texto
+    String textoCodigoCliente = CodigoCliente.getText();
+    String textoCodigoLivro = CodigoLivro.getText();
+    String dataAluguel = DataAluguel.getText(); // Obter data de aluguel do campo de texto
+    String dataDevolucao = DataDevolucao.getText(); // Obter data de devolução do campo de texto
 
+    try {
+        // Converter o texto para números inteiros
+        int codigoCliente = Integer.parseInt(textoCodigoCliente);
+        int codigoLivro = Integer.parseInt(textoCodigoLivro);
+        
+        // Chamar o método alugarLivro em AluguelDAO para inserir as informações de aluguel
         AluguelDAO aluguelDAO = new AluguelDAO();
+        int clienteId = aluguelDAO.getIdClienteByCodigo(codigoCliente);
+        int livroId = aluguelDAO.getIdLivroByCodigo(codigoLivro);
 
-        // Obter o ID do cliente e do livro com base no CPF e no título do livro
-        int idCliente = aluguelDAO.getIdClienteByCPF(cpf);
-        int idLivro = aluguelDAO.getIdLivroByTitulo(tituloLivro);
-
-        if (idCliente == -1) {
-            System.out.println("Cliente não encontrado.");
+        if (clienteId == -1) {
+            JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
             return; // Sai do método se o cliente não for encontrado
         }
 
-        if (idLivro == -1) {
-            System.out.println("Livro não encontrado.");
+        if (livroId == -1) {
+            JOptionPane.showMessageDialog(null, "Livro não encontrado.");
             return; // Sai do método se o livro não for encontrado
         }
 
-        // Criar um objeto Aluguel com os IDs obtidos e as datas fornecidas
-        Cliente cliente = new Cliente(); // Você precisa criar a instância correta de Cliente com base no ID
-        cliente.setIdCliente(idCliente); // Definir o ID do cliente na instância
-        Livro livro = new Livro(); // Você precisa criar a instância correta de Livro com base no ID
-        livro.setIdLivro(idLivro); // Definir o ID do livro na instância
-        Aluguel aluguel = new Aluguel(cliente, livro, dataAluguel, dataDevolucao);
+        // Crie um objeto Aluguel e configure os dados
+        Aluguel aluguel = new Aluguel();
+        aluguel.setDataAluguel(dataAluguel);
+        aluguel.setDataDevolucao(dataDevolucao);
 
         // Chamar o método alugarLivro em AluguelDAO para inserir as informações de aluguel
+        int rowCount = aluguelDAO.alugarLivro(aluguel, clienteId, livroId);
 
-        int rowCount = aluguelDAO.alugarLivro(aluguel);
-
-        if (rowCount > 0) {
-            System.out.println("Livro alugado com sucesso.");
-            // Limpar campos de texto ou atualizar a interface do usuário conforme necessário
+        if (rowCount > 0) {  
+            JOptionPane.showMessageDialog(null, "Livro alugado com sucesso.");
+            // Limpar campos de texto
+            CodigoCliente.setText("");
+            CodigoLivro.setText("");
+            DataAluguel.setText("");
+            DataDevolucao.setText("");
         } else {
-            System.out.println("Erro ao alugar o livro.");
-            // Lidar com erro ou exibir mensagem para o usuário
+            JOptionPane.showMessageDialog(null, "Erro ao alugar o livro.");
         }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(null, "Por favor, insira números válidos para o código do cliente e do livro.");
+    }
     }//GEN-LAST:event_alugarActionPerformed
        
 
@@ -281,12 +331,12 @@ public class TelaAluguel extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable AluguelTabela;
     private javax.swing.JButton Buscar;
     private javax.swing.JTextField CodigoCliente;
     private javax.swing.JTextField CodigoLivro;
     private javax.swing.JTextField DataAluguel;
     private javax.swing.JTextField DataDevolucao;
+    private javax.swing.JTable TabelaAluguel;
     private javax.swing.JButton alugar;
     private javax.swing.JTextField buscarCpfAluguel;
     private javax.swing.JButton devolver;

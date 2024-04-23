@@ -11,26 +11,20 @@ import java.util.logging.Level;
 import livro.Livro;
 
 public class AluguelDAO {
-  public int alugarLivro(Aluguel aluguel) {
+ public int alugarLivro(Aluguel aluguel, int clienteId, int livroId) {
     int rowCount = 0;
     try (Connection conn = ConexaoBancoDados.getConexaoMySql()) {
         // Verificar se o livro está disponível
-        boolean livroDisponivel = livroEstaAlugado(aluguel.getLivro().getTitulo());
+        boolean livroDisponivel = livroEstaAlugado(livroId);
         
         if (!livroDisponivel) {
             System.out.println("Livro indisponível para aluguel.");
             return rowCount;
         }
-        
-        // Aqui, vamos precisar buscar o ID do cliente pelo CPF
-        int idCliente = getIdClienteByCPF(aluguel.getCliente().getCpf());
-        
-        // E também o ID do livro pelo título
-        int idLivro = getIdLivroByTitulo(aluguel.getLivro().getTitulo());
 
         PreparedStatement ps = conn.prepareStatement("INSERT INTO aluguel(idCliente, idLivro, dataAluguel, dataDevolucao) VALUES(?,?,?,?)");
-        ps.setInt(1, idCliente);
-        ps.setInt(2, idLivro);
+        ps.setInt(1, clienteId);
+        ps.setInt(2, livroId);
         ps.setString(3, aluguel.getDataAluguel());
         ps.setString(4, aluguel.getDataDevolucao());
 
@@ -38,14 +32,13 @@ public class AluguelDAO {
 
         // Atualizar status do livro para indisponível
         if (rowCount > 0) {
-            atualizarStatusLivro(idLivro, false);
+            atualizarStatusLivro(livroId, false);
         }
     } catch (SQLException ex) {
         java.util.logging.Logger.getLogger(AluguelDAO.class.getName()).log(Level.SEVERE, null, ex);
     }
     return rowCount;
 }
-
 
 private boolean verificarDisponibilidadeLivro(int idLivro) {
     try (Connection conn = ConexaoBancoDados.getConexaoMySql()) {
@@ -188,13 +181,13 @@ private int buscarIdLivroPorIdAluguel(int idAluguel) {
         }
         return null;
 }
-    public boolean livroEstaAlugado(String tituloLivro) {
-         try (Connection conn = ConexaoBancoDados.getConexaoMySql()) {
+    public boolean livroEstaAlugado(int livroId) {
+    try (Connection conn = ConexaoBancoDados.getConexaoMySql()) {
         // Consulta SQL para verificar se o livro está disponível para aluguel
-        String sql = "SELECT disponivel FROM livro WHERE titulo = ?";
+        String sql = "SELECT disponivel FROM livro WHERE idLivro = ?";
 
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, tituloLivro);
+        ps.setInt(1, livroId);
         ResultSet rs = ps.executeQuery();
 
         // Se a consulta retornar alguma linha e o livro estiver disponível (disponivel = true), retorna true
@@ -211,41 +204,13 @@ private int buscarIdLivroPorIdAluguel(int idAluguel) {
         return false;
     }
 }
-    
-    public int getIdClienteByCPF(String cpf) {
-    int clientId = -1; // Initialize with a default value indicating not found
-    String sql = "SELECT idCliente FROM cliente WHERE cpf = ?";
 
-    try (Connection conn = ConexaoBancoDados.getConexaoMySql();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, cpf);
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            clientId = rs.getInt("idCliente");
-        }
-    } catch (SQLException ex) {
-        java.util.logging.Logger.getLogger(AluguelDAO.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return clientId;
+    public int getIdClienteByCodigo(int clienteId) {
+    return clienteId; // Retorna o ID do cliente diretamente
 }
 
-    public int getIdLivroByTitulo(String titulo) {
-        int livroId = -1; // Initialize with a default value indicating not found
-        String sql = "SELECT idLivro FROM livro WHERE titulo = ?";
-
-        try (Connection conn = ConexaoBancoDados.getConexaoMySql();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, titulo);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                livroId = rs.getInt("idLivro");
-            }
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(AluguelDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return livroId;
-    }
+    public int getIdLivroByCodigo(int livroId) {
+    return livroId; // Retorna o ID do livro diretamente
+}
 }
 
