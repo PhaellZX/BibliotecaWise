@@ -42,7 +42,7 @@ Livros dados:
 - Título
 - Autor
 - Gênero
-- Dísponivel(Se o livro estiver disponivel, o aluguel é feito, senão, o aluguel não pode ser feito)
+- Dísponivel(Se o livro estiver disponivel, o aluguel é feito(true), senão, o aluguel não pode ser feito(false))
 
 Tela de Cadastro, edição, remoção e busca dos livros.
 
