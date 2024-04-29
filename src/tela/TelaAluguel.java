@@ -10,6 +10,10 @@ import cliente.Cliente;
 import com.mysql.cj.xdevapi.Client;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -24,44 +28,95 @@ public class TelaAluguel extends javax.swing.JFrame {
     
     private DefaultTableModel tableModel;
     private AluguelDAO aluguelDAO;
+    private boolean running;
+    private boolean updateEnabled; 
+    private long startTime;
+    private int selectedRowIndex = -1;
     
     public TelaAluguel() {
-        initComponents();
-        
-          tableModel = new DefaultTableModel();
-          tableModel.addColumn("idAluguel");
-          tableModel.addColumn("idCliente");
-          tableModel.addColumn("idLivro");
-          tableModel.addColumn("dataAluguel");
-          tableModel.addColumn("datadevolucao");
-          TabelaAluguel.setModel(tableModel);
-          aluguelDAO = new AluguelDAO();
-      
-          TabelaAluguel.addMouseListener(new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent e) {
-                  int rowIndex = TabelaAluguel.getSelectedRow();
-    if (rowIndex != -1) {
-        // Obtém os valores da linha selecionada
-        String idAluguel = tableModel.getValueAt(rowIndex, 1).toString();
-        String idCliente = tableModel.getValueAt(rowIndex, 2).toString();
-        String idLivro = tableModel.getValueAt(rowIndex, 3).toString();
-        String dataAluguel = tableModel.getValueAt(rowIndex, 4).toString();
-        String dataDevolucao = tableModel.getValueAt(rowIndex, 5).toString();
+    initComponents();
+    setResizable(false);
+    
+    // Configurar o modelo da tabela
+    tableModel = new DefaultTableModel();
+    tableModel.addColumn("idAluguel");
+    tableModel.addColumn("idCliente");
+    tableModel.addColumn("idLivro");
+    tableModel.addColumn("dataAluguel");
+    tableModel.addColumn("dataDevolucao");
+    TabelaAluguel.setModel(tableModel);
+    
+    // Inicializar o DAO e outras variáveis
+    aluguelDAO = new AluguelDAO();
+    running = true;
+    updateEnabled = true;
+    startTime = System.currentTimeMillis();
+    startDataUpdateThread();
+    
+    // Adicionar um ouvinte de clique à tabela
+    TabelaAluguel.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int rowIndex = TabelaAluguel.getSelectedRow();
+            if (rowIndex != -1) {
+             // Obtém os valores da linha selecionada
+            String idAluguel = tableModel.getValueAt(rowIndex, 0).toString();
+            String idCliente = tableModel.getValueAt(rowIndex, 1).toString();
+            String idLivro = tableModel.getValueAt(rowIndex, 2).toString();
+            String dataAluguel = tableModel.getValueAt(rowIndex, 3).toString();
+            String dataDevolucao = tableModel.getValueAt(rowIndex, 4).toString();
 
-        // Preenche os campos de edição com os valores da linha selecionada
-        idAluguel.setText(idAluguel);
-        C.setText(cpf);
-        Endereco.setText(endereco);
-        Telefone.setText(telefone);
-
-        // Habilita a edição dos campos de texto
-        Nome.setEditable(true);
-        Cpf.setEditable(true);
-        Endereco.setEditable(true);
-        Telefone.setEditable(true);
+            // Preenche os campos de edição com os valores da linha selecionada
+            CodigoCliente.setText(idCliente);
+            CodigoLivro.setText(idLivro);
+            DataAluguel.setText(dataAluguel);
+            DataDevolucao.setText(dataDevolucao);
+            
+             running = false;
+            }
+        }
+    });
+}
+     // Método para atualizar o tempo de execução na tela
+    private void updateExecutionTime() {
+        long elapsedTime = System.currentTimeMillis() - startTime; // Calcula o tempo decorrido
        
-                  }
+        // Formata o tempo decorrido em formato de horas, minutos, segundos e milissegundos
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Configura o fuso horário para evitar problemas de ajuste de horário de verão
+        String formattedTime = dateFormat.format(new Date(elapsedTime));
+
+        tempo.setText(formattedTime); // Atualiza o texto do componente tempo
+    }
+    
+    private void startDataUpdateThread() {
+        Thread thread = new Thread(() -> {
+            while (running) {
+                if (updateEnabled) {
+                    updateTable();
+                    updateExecutionTime();
+                }
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+    
+     private void updateTable() {
+        ArrayList<Aluguel> alugueis = aluguelDAO.listarAlugueis();
+    tableModel.setRowCount(0); // Limpar a tabela antes de atualizar
+    for (Aluguel aluguel: alugueis) {
+        tableModel.addRow(new Object[]{aluguel.getIdAluguel(), aluguel.getCliente().getIdCliente(), aluguel.getLivro().getIdLivro(), aluguel.getDataAluguel(), aluguel.getDataDevolucao()});
+    }
+    // Verifica se a linha selecionada ainda está dentro dos limites da tabela
+    if (selectedRowIndex != -1 && selectedRowIndex < tableModel.getRowCount()) {
+        // Define a seleção da linha para a mesma linha selecionada anteriormente
+        TabelaAluguel.setRowSelectionInterval(selectedRowIndex, selectedRowIndex);
+    }
     }
     
     /**
@@ -86,14 +141,23 @@ public class TelaAluguel extends javax.swing.JFrame {
         tempo = new javax.swing.JLabel();
         DataAluguel = new javax.swing.JTextField();
         DataDevolucao = new javax.swing.JTextField();
-        buscarCpfAluguel = new javax.swing.JTextField();
+        buscarCodigoAluguel = new javax.swing.JTextField();
         Buscar = new javax.swing.JButton();
+        refresh = new javax.swing.JButton();
+        seed = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(170, 128, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jPanel1.setBackground(new java.awt.Color(170, 128, 255));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Aluguel");
 
+        alugar.setBackground(new java.awt.Color(0, 77, 0));
+        alugar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        alugar.setForeground(new java.awt.Color(255, 255, 255));
         alugar.setText("Alugar Livro");
         alugar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -101,6 +165,9 @@ public class TelaAluguel extends javax.swing.JFrame {
             }
         });
 
+        devolver.setBackground(new java.awt.Color(153, 0, 0));
+        devolver.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        devolver.setForeground(new java.awt.Color(255, 255, 255));
         devolver.setText("Devolver Livro");
         devolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -108,6 +175,9 @@ public class TelaAluguel extends javax.swing.JFrame {
             }
         });
 
+        voltar.setBackground(new java.awt.Color(102, 26, 255));
+        voltar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        voltar.setForeground(new java.awt.Color(255, 255, 255));
         voltar.setText("Voltar");
         voltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -115,6 +185,7 @@ public class TelaAluguel extends javax.swing.JFrame {
             }
         });
 
+        TabelaAluguel.setBackground(new java.awt.Color(217, 179, 255));
         TabelaAluguel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -128,21 +199,54 @@ public class TelaAluguel extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(TabelaAluguel);
 
-        label1.setText("Tempo de Execução das Threads:");
+        label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label1.setForeground(new java.awt.Color(255, 255, 255));
+        label1.setText("Execução das Threads a cada 10s:");
 
         CodigoCliente.setText("Código do Cliente");
 
         CodigoLivro.setText("Código do Livro");
 
-        tempo.setText("jLabel2");
-
         DataAluguel.setText("Data do Aluguel XX/XX/XXXX");
+        DataAluguel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DataAluguelActionPerformed(evt);
+            }
+        });
 
         DataDevolucao.setText("Data da Devolução XX/XX/XXXX");
 
-        buscarCpfAluguel.setText("Buscar Aluguel por CPF");
+        buscarCodigoAluguel.setText("Buscar o código do aluguel");
 
+        Buscar.setBackground(new java.awt.Color(102, 26, 255));
+        Buscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        Buscar.setForeground(new java.awt.Color(255, 255, 255));
         Buscar.setText("Buscar");
+        Buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BuscarActionPerformed(evt);
+            }
+        });
+
+        refresh.setBackground(new java.awt.Color(102, 26, 255));
+        refresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        refresh.setForeground(new java.awt.Color(255, 255, 255));
+        refresh.setText("Refresh");
+        refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshActionPerformed(evt);
+            }
+        });
+
+        seed.setBackground(new java.awt.Color(102, 26, 255));
+        seed.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        seed.setForeground(new java.awt.Color(255, 255, 255));
+        seed.setText("Gerar Seed");
+        seed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seedActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -150,150 +254,291 @@ public class TelaAluguel extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1)
-                    .addComponent(CodigoLivro)
-                    .addComponent(CodigoCliente)
-                    .addComponent(DataAluguel)
-                    .addComponent(DataDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(devolver, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(alugar, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(voltar, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(buscarCpfAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(Buscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(14, 14, 14))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tempo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(seed)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(CodigoCliente)
+                                    .addComponent(CodigoLivro, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(DataAluguel, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(DataDevolucao))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(alugar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(devolver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(voltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(28, 28, 28)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(buscarCodigoAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                                .addComponent(Buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(219, 219, 219)
+                        .addComponent(tempo)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(CodigoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(alugar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(devolver)
-                            .addComponent(CodigoLivro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(voltar)
-                            .addComponent(DataAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(DataDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(buscarCpfAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Buscar))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(17, 17, 17)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CodigoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(alugar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CodigoLivro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(devolver))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(DataAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(voltar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(DataDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tempo))
-                .addGap(117, 117, 117))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(tempo)
+                        .addGap(236, 236, 236))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seed)
+                        .addContainerGap())))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buscarCodigoAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Buscar)
+                    .addComponent(refresh))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 871, Short.MAX_VALUE)
+            .addGap(0, 923, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(29, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 287, Short.MAX_VALUE)
+            .addGap(0, 302, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void seedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seedActionPerformed
+
+        Cliente cliente = new Cliente();
+        Livro livro = new Livro();
+
+        cliente.setIdCliente(1);
+        livro.setIdLivro(2);
+
+        Aluguel aluguel1 = new Aluguel(cliente, livro, "24/04/2024", "30/04/2024");
+
+        Cliente cliente2 = new Cliente();
+        Livro livro2 = new Livro();
+
+        cliente2.setIdCliente(3);
+        livro2.setIdLivro(4);
+
+        Aluguel aluguel2 = new Aluguel(cliente2, livro2, "24/03/2024", "29/03/2024");
+
+        Cliente cliente3 = new Cliente();
+        Livro livro3 = new Livro();
+
+        cliente3.setIdCliente(4);
+        livro3.setIdLivro(5);
+
+        Aluguel aluguel3 = new Aluguel(cliente3, livro3, "15/03/2024", "20/03/2024");
+
+        Cliente cliente4 = new Cliente();
+        Livro livro4 = new Livro();
+
+        cliente4.setIdCliente(5);
+        livro4.setIdLivro(6);
+
+        Aluguel aluguel4 = new Aluguel(cliente4, livro4, "15/04/2024", "01/05/2024");
+
+        Cliente cliente5 = new Cliente();
+        Livro livro5 = new Livro();
+
+        cliente4.setIdCliente(7);
+        livro4.setIdLivro(8);
+
+        Aluguel aluguel5 = new Aluguel(cliente5, livro5, "01/04/2024", "15/04/2024");
+
+        AluguelDAO aluguelDAO = new AluguelDAO();
+        int rowCount1 = aluguelDAO.alugarLivro(aluguel1, cliente.getIdCliente(), livro.getIdLivro());
+        int rowCount2 = aluguelDAO.alugarLivro(aluguel2, cliente2.getIdCliente(), livro2.getIdLivro());
+        int rowCount3 = aluguelDAO.alugarLivro(aluguel3, cliente3.getIdCliente(), livro3.getIdLivro());
+        int rowCount4 = aluguelDAO.alugarLivro(aluguel4, cliente4.getIdCliente(), livro4.getIdLivro());
+        int rowCount5 = aluguelDAO.alugarLivro(aluguel5, cliente5.getIdCliente(), livro5.getIdLivro());
+
+        JOptionPane.showMessageDialog(this, "SEED GERADA! Livros alugados com sucesso!");
+        startDataUpdateThread();
+
+        running = true;
+    }//GEN-LAST:event_seedActionPerformed
+
+    private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
+        updateTable(); // Chama o método para atualizar a tabela
+        startDataUpdateThread();
+        running = true;
+    }//GEN-LAST:event_refreshActionPerformed
+
+    private void BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarActionPerformed
+
+    }//GEN-LAST:event_BuscarActionPerformed
+
+    private void DataAluguelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataAluguelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DataAluguelActionPerformed
+
     private void voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voltarActionPerformed
         setVisible(false);
-        new TelaMain().setVisible(true);
+        TelaMain.getInstance().setVisible(true);
+        TelaMain.getInstance().setLocationRelativeTo(null); // Set the location to center of screen
     }//GEN-LAST:event_voltarActionPerformed
 
     private void devolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolverActionPerformed
-    
+        // Verifica se uma linha foi selecionada na tabela
+        if (TabelaAluguel.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Por favor, selecione um aluguel para devolver.");
+            return;
+        }
+
+        // Obtém o índice da linha selecionada
+        int rowIndex = TabelaAluguel.getSelectedRow();
+
+        try {
+            // Obtém o ID do aluguel da linha selecionada
+            int codigoAluguel = Integer.parseInt(tableModel.getValueAt(rowIndex, 0).toString());
+
+            // Chama o método para devolver o livro
+            AluguelDAO aluguelDAO = new AluguelDAO();
+            aluguelDAO.devolverLivro(codigoAluguel);
+            
+             JOptionPane.showMessageDialog(null, "Livro devolvido com sucesso!");
+            
+            // Atualiza a tabela após a devolução do livro
+            updateTable();
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Por favor, insira um número válido para o código do aluguel.");
+        }
+          running = true;
     }//GEN-LAST:event_devolverActionPerformed
 
     private void alugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alugarActionPerformed
-              // Obter o texto dos campos de texto
+        // Obter o texto dos campos de texto
+        String textoCodigoCliente = CodigoCliente.getText();
+        String textoCodigoLivro = CodigoLivro.getText();
+        String dataAluguel = DataAluguel.getText(); // Obter data de aluguel do campo de texto
+        String dataDevolucao = DataDevolucao.getText(); // Obter data de devolução do campo de texto
+
+        try {
+            // Converter o texto para números inteiros
+            int codigoCliente = Integer.parseInt(textoCodigoCliente);
+            int codigoLivro = Integer.parseInt(textoCodigoLivro);
+
+            // Chamar o método alugarLivro em AluguelDAO para inserir as informações de aluguel
+            AluguelDAO aluguelDAO = new AluguelDAO();
+            int clienteId = aluguelDAO.getIdClienteByCodigo(codigoCliente);
+            int livroId = aluguelDAO.getIdLivroByCodigo(codigoLivro);
+
+            if (clienteId == -1) {
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+                return; // Sai do método se o cliente não for encontrado
+            }
+
+            if (livroId == -1) {
+                JOptionPane.showMessageDialog(null, "Livro não encontrado.");
+                return; // Sai do método se o livro não for encontrado
+            }
+
+            // Crie um objeto Aluguel e configure os dados
+            Aluguel aluguel = new Aluguel();
+            aluguel.setDataAluguel(dataAluguel);
+            aluguel.setDataDevolucao(dataDevolucao);
+
+            // Chamar o método alugarLivro em AluguelDAO para inserir as informações de aluguel
+            int rowCount = aluguelDAO.alugarLivro(aluguel, clienteId, livroId);
+
+            if (rowCount > 0) {
+                JOptionPane.showMessageDialog(null, "Livro alugado com sucesso.");
+                // Limpar campos de texto
+                CodigoCliente.setText("");
+                CodigoLivro.setText("");
+                DataAluguel.setText("");
+                DataDevolucao.setText("");
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao alugar o livro.");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Por favor, insira números válidos para o código do cliente e do livro.");
+        }
+    }//GEN-LAST:event_alugarActionPerformed
+
+  // Método para atualizar a tabela com os dados dos aluguéis
+private void atualizarTabela() {
+    // Parar a atualização da tabela
+    updateEnabled = false;
+
+    // Obter o código do cliente e do livro para busca
     String textoCodigoCliente = CodigoCliente.getText();
     String textoCodigoLivro = CodigoLivro.getText();
-    String dataAluguel = DataAluguel.getText(); // Obter data de aluguel do campo de texto
-    String dataDevolucao = DataDevolucao.getText(); // Obter data de devolução do campo de texto
 
     try {
         // Converter o texto para números inteiros
-        int codigoCliente = Integer.parseInt(textoCodigoCliente);
-        int codigoLivro = Integer.parseInt(textoCodigoLivro);
-        
-        // Chamar o método alugarLivro em AluguelDAO para inserir as informações de aluguel
+        int clienteId = Integer.parseInt(textoCodigoCliente);
+        int livroId = Integer.parseInt(textoCodigoLivro);
+
+        // Chamar o método para buscar o código do aluguel
         AluguelDAO aluguelDAO = new AluguelDAO();
-        int clienteId = aluguelDAO.getIdClienteByCodigo(codigoCliente);
-        int livroId = aluguelDAO.getIdLivroByCodigo(codigoLivro);
+        int codigoAluguel = aluguelDAO.getCodigoAluguelByClienteId(clienteId, livroId);
 
-        if (clienteId == -1) {
-            JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
-            return; // Sai do método se o cliente não for encontrado
-        }
+        if (codigoAluguel != -1) {
+            // Limpa a tabela
+            tableModel.setRowCount(0);
 
-        if (livroId == -1) {
-            JOptionPane.showMessageDialog(null, "Livro não encontrado.");
-            return; // Sai do método se o livro não for encontrado
-        }
-
-        // Crie um objeto Aluguel e configure os dados
-        Aluguel aluguel = new Aluguel();
-        aluguel.setDataAluguel(dataAluguel);
-        aluguel.setDataDevolucao(dataDevolucao);
-
-        // Chamar o método alugarLivro em AluguelDAO para inserir as informações de aluguel
-        int rowCount = aluguelDAO.alugarLivro(aluguel, clienteId, livroId);
-
-        if (rowCount > 0) {  
-            JOptionPane.showMessageDialog(null, "Livro alugado com sucesso.");
-            // Limpar campos de texto
-            CodigoCliente.setText("");
-            CodigoLivro.setText("");
-            DataAluguel.setText("");
-            DataDevolucao.setText("");
+            // Adiciona o código do aluguel encontrado à tabela
+            tableModel.addRow(new Object[]{codigoAluguel});
         } else {
-            JOptionPane.showMessageDialog(null, "Erro ao alugar o livro.");
+            JOptionPane.showMessageDialog(null, "Código do aluguel não encontrado.");
         }
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(null, "Por favor, insira números válidos para o código do cliente e do livro.");
+    } finally {
+        // Restaurar updateEnabled para true após a conclusão da busca
+        updateEnabled = true;
     }
-    }//GEN-LAST:event_alugarActionPerformed
+}
        
-
     /**
      * @param args the command line arguments
      */
@@ -338,12 +583,14 @@ public class TelaAluguel extends javax.swing.JFrame {
     private javax.swing.JTextField DataDevolucao;
     private javax.swing.JTable TabelaAluguel;
     private javax.swing.JButton alugar;
-    private javax.swing.JTextField buscarCpfAluguel;
+    private javax.swing.JTextField buscarCodigoAluguel;
     private javax.swing.JButton devolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private java.awt.Label label1;
+    private javax.swing.JButton refresh;
+    private javax.swing.JButton seed;
     private javax.swing.JLabel tempo;
     private javax.swing.JButton voltar;
     // End of variables declaration//GEN-END:variables

@@ -59,7 +59,7 @@ public class Aluguel {
         this.cliente = cliente;
     }
 
-    public void setIdLivro(Livro idlivro) {
+    public void setLivro(Livro livro) {
         this.livro = livro;
     }
 

@@ -8,7 +8,7 @@ public class Livro {
     private String genero;
     private boolean disponivel;
 
-    public Livro(String anoPublicacao, String titulo, String autor, String genero) {
+    public Livro(String anoPublicacao, String titulo, String autor, String genero, boolean disponivel) {
         this.anoPublicacao = anoPublicacao;
         this.titulo = titulo;
         this.autor = autor;
@@ -23,9 +23,16 @@ public class Livro {
         this.genero = genero;
         this.disponivel = disponivel;
     }
+    
+    public Livro(String anoPublicacao, String titulo, String autor, String genero){
+        this.anoPublicacao = anoPublicacao;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.genero = genero;
+    }
   
     public Livro(){
-    
+         this.disponivel = true;
     }
     
     public int getIdLivro() {

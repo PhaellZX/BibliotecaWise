@@ -38,8 +38,8 @@ public class LivroDAO {
                 String titulo = rs.getString(3);
                 String autor = rs.getString(4);
                 String genero = rs.getString(5);
-                String disponivel = rs.getString(5);
-                Livro l = new Livro(anoPublicacao, titulo, autor, genero);
+                boolean disponivel = rs.getBoolean(6);
+                Livro l = new Livro(anoPublicacao, titulo, autor, genero, disponivel);
                 return l;
             }
             conn.close();
@@ -126,7 +126,7 @@ public class LivroDAO {
                 String autor = rs.getString("autor");
                 String genero = rs.getString("genero");
                 boolean disponivel = rs.getBoolean("disponivel");
-                Livro livro = new Livro(idLivro , anoPublicacao, titulo, autor, genero, disponivel);
+                Livro livro = new Livro(idLivro , anoPublicacao, titulo, autor, genero,disponivel);
                 return livro;
             }
         } catch (SQLException ex) {

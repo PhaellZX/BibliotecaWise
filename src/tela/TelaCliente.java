@@ -30,7 +30,7 @@ public class TelaCliente extends javax.swing.JFrame {
     
     public TelaCliente() {
         initComponents();
-        
+        setResizable(false);
        
         tableModel = new DefaultTableModel();
         tableModel.addColumn("ID");
@@ -95,7 +95,7 @@ public class TelaCliente extends javax.swing.JFrame {
                     updateExecutionTime();
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -165,12 +165,20 @@ public class TelaCliente extends javax.swing.JFrame {
         refresh = new javax.swing.JButton();
         label1 = new java.awt.Label();
         tempo = new java.awt.Label();
+        seed = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(170, 128, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jPanel1.setBackground(new java.awt.Color(170, 128, 255));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Cliente");
 
+        cadastrar.setBackground(new java.awt.Color(0, 77, 0));
+        cadastrar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cadastrar.setForeground(new java.awt.Color(255, 255, 255));
         cadastrar.setText("Cadastrar");
         cadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,6 +186,9 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
+        editar.setBackground(new java.awt.Color(128, 128, 0));
+        editar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        editar.setForeground(new java.awt.Color(255, 255, 255));
         editar.setText("Editar");
         editar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -185,6 +196,9 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
+        buscar.setBackground(new java.awt.Color(102, 26, 255));
+        buscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        buscar.setForeground(new java.awt.Color(255, 255, 255));
         buscar.setText("Buscar");
         buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -192,6 +206,9 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
+        apagar.setBackground(new java.awt.Color(153, 0, 0));
+        apagar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        apagar.setForeground(new java.awt.Color(255, 255, 255));
         apagar.setText("Apagar");
         apagar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -199,6 +216,9 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
+        voltar.setBackground(new java.awt.Color(102, 26, 255));
+        voltar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        voltar.setForeground(new java.awt.Color(255, 255, 255));
         voltar.setText("Voltar");
         voltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -206,6 +226,7 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
+        tabelaCliente.setBackground(new java.awt.Color(217, 179, 255));
         tabelaCliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -240,6 +261,9 @@ public class TelaCliente extends javax.swing.JFrame {
 
         Telefone.setText("telefone");
 
+        refresh.setBackground(new java.awt.Color(102, 26, 255));
+        refresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        refresh.setForeground(new java.awt.Color(255, 255, 255));
         refresh.setText("Refresh");
         refresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -247,7 +271,22 @@ public class TelaCliente extends javax.swing.JFrame {
             }
         });
 
-        label1.setText("Tempo de Execução das Threads:");
+        label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        label1.setForeground(new java.awt.Color(255, 255, 255));
+        label1.setText("Execução das Threads a cada 10s:");
+
+        tempo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        tempo.setForeground(new java.awt.Color(255, 255, 255));
+
+        seed.setBackground(new java.awt.Color(102, 26, 255));
+        seed.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        seed.setForeground(new java.awt.Color(255, 255, 255));
+        seed.setText("Gerar Seed");
+        seed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seedActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -260,7 +299,7 @@ public class TelaCliente extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(Telefone, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(Nome, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Cpf, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                            .addComponent(Cpf, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(Endereco, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -274,8 +313,9 @@ public class TelaCliente extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(1, 1, 1)
-                                .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(seed))
+                        .addGap(0, 73, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -319,12 +359,14 @@ public class TelaCliente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(Telefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(seed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(label1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tempo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 10, Short.MAX_VALUE)))
+                        .addGap(0, 22, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -332,16 +374,11 @@ public class TelaCliente extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -415,8 +452,9 @@ public class TelaCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_buscarActionPerformed
 
     private void voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voltarActionPerformed
-       setVisible(false);
-       new TelaMain().setVisible(true);
+       setVisible(false);    
+       TelaMain.getInstance().setVisible(true);
+       TelaMain.getInstance().setLocationRelativeTo(null); // Set the location to center of screen
     }//GEN-LAST:event_voltarActionPerformed
 
     
@@ -485,38 +523,68 @@ public class TelaCliente extends javax.swing.JFrame {
         running = true;
     }//GEN-LAST:event_refreshActionPerformed
 
+    private void seedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seedActionPerformed
+       Cliente cliente1 = new Cliente("João da Silva", "111.222.333-44", "Rua A, 123", "(00) 1234-5678");
+       Cliente cliente2 = new Cliente("Maria Oliveira", "222.333.444-55", "Avenida B, 456", "(00) 2345-6789");
+       Cliente cliente3 = new Cliente("Pedro Santos", "333.444.555-66", "Travessa C, 789", "(00) 3456-7890");
+       Cliente cliente4 = new Cliente("Ana Pereira", "444.555.666-77", "Praça D, 987", "(00) 4567-8901");
+       Cliente cliente5 = new Cliente("Lucas Souza", "555.666.777-88", "Rua E, 654", "(00) 5678-9012");
+       Cliente cliente6 = new Cliente("Carla Lima", "666.777.888-99", "Avenida F, 321", "(00) 6789-0123");
+       Cliente cliente7 = new Cliente("Marcos Costa", "777.888.999-00", "Travessa G, 654", "(00) 7890-1234");
+       Cliente cliente8 = new Cliente("Juliana Almeida", "888.999.000-11", "Praça H, 321", "(00) 8901-2345");
+       Cliente cliente9 = new Cliente("Luiza Fernandes", "999.000.111-22", "Rua I, 987", "(00) 9012-3456");
+       Cliente cliente10 = new Cliente("Rafael Oliveira", "000.111.222-33", "Avenida J, 456", "(00) 0123-4567");
+       
+       ClienteDAO clienteDAO = new ClienteDAO();
+       int rowCount1 = clienteDAO.insert(cliente1);
+       int rowCount2 = clienteDAO.insert(cliente2);
+       int rowCount3 = clienteDAO.insert(cliente3);
+       int rowCount4 = clienteDAO.insert(cliente4);
+       int rowCount5 = clienteDAO.insert(cliente5);
+       int rowCount6 = clienteDAO.insert(cliente6);
+       int rowCount7 = clienteDAO.insert(cliente7);
+       int rowCount8 = clienteDAO.insert(cliente8);
+       int rowCount9 = clienteDAO.insert(cliente9);
+       int rowCount10 = clienteDAO.insert(cliente10);
+       
+       JOptionPane.showMessageDialog(this, "SEED GERADA! Clientes cadastrados com sucesso!");
+       startDataUpdateThread();
+        
+        running = true;
+    }//GEN-LAST:event_seedActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+     */
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
+    } catch (ClassNotFoundException ex) {
+        java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (InstantiationException ex) {
+        java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (IllegalAccessException ex) {
+        java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(TelaCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    }
+    //</editor-fold>
+    //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaCliente().setVisible(true);
+               new TelaCliente().setVisible(true);
             }
         });
     }
@@ -536,6 +604,7 @@ public class TelaCliente extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private java.awt.Label label1;
     private javax.swing.JButton refresh;
+    private javax.swing.JButton seed;
     private javax.swing.JTable tabelaCliente;
     private java.awt.Label tempo;
     private javax.swing.JButton voltar;
