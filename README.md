@@ -19,11 +19,26 @@ Contém os acesso das telas de cadastro de clientes e livros, e também a tela d
 
 ![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/feefc08b-07a9-401c-9c9b-f5092e333689)
 
+Cliente dados:
+- ID do cliente
+- Nome
+- CPF
+- Endereço
+- Telefone
+
 Tela de Cadastro, edição, remoção e busca dos clientes.
 
 ## Tela Livro
 
 ![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/2717e8fc-242c-4042-ba0d-18b4d47a36a8)
+
+Livros dados:
+- ID do livro
+- Ano da Publicação
+- Título
+- Autor
+- Gênero
+- Dísponivel(Se o livro estiver disponivel, o aluguel é feito, senão, o aluguel não pode ser feito)
 
 Tela de Cadastro, edição, remoção e busca dos livros.
 
@@ -31,11 +46,28 @@ Tela de Cadastro, edição, remoção e busca dos livros.
 
 ![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/f03926f7-acff-4118-b5ff-880e18616caa)
 
+Dados do aluguel:
+- ID do aluguel
+- ID do cliente
+- ID do livro
+- Data do aluguel
+- Data da devolução
+
 ## Tela para alugar ou devolver os livros.
 
 ![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/b4d7ae87-2a5e-4c30-a0ee-df8f81032a4e)
 
-Obs: O botão "Gerar Seed" serve para armazenar o conjunto de dados no banco de dados, em cada tela possui esse botão para fazer os testes possíveis.  
+O botão "Gerar Seed" serve para armazenar o conjunto de dados no banco de dados, em cada tela possui esse botão para fazer os testes possíveis. 
+
+![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/17dbd283-5d31-4625-880e-a173e919a0f8)
+
+O botão de Refresh serve para atualizar os dados da tabela, caso necessário.
+
+![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/e5d063bb-5888-4cf8-9d44-8b1bbf650afd)
+
+Atualização dos dados a cada 10 segundos.
+
+
 
 
 
