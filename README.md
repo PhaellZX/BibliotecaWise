@@ -7,7 +7,11 @@ Programa de alugueis de livros.
 - JDK(Java SE Development Kit)
 - Netbeans
 - Xamppp
-- Mysql Workbench(Opcional) 
+- Mysql Workbench(Opcional)
+
+## Banco de Dados
+
+O arquivo para gerar o banco de dados se encontra na pasta SQL/bibiotecawise.sql
 
 ## Tela Inicial
 
