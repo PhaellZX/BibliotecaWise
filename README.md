@@ -7,7 +7,7 @@ Programa de alugueis de livros.
 - JDK(Java SE Development Kit)
 - Netbeans
 - Xamppp
-- Mysql Workebnch(Opcional) 
+- Mysql Workbench(Opcional) 
 
 ## Tela Inicial
 
