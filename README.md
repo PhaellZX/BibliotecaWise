@@ -11,7 +11,7 @@ Programa de alugueis de livros.
 
 ## Banco de Dados
 
-O arquivo para gerar o banco de dados se encontra na pasta SQL/bibiotecawise.sql
+O arquivo para gerar o banco de dados se encontra na pasta SQL/bacoDeDados.sql
 
 ## Tela Inicial
 
