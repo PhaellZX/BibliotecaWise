@@ -222,4 +222,5 @@ public class AluguelDAO {
         }
         return null; // Retorna null se o aluguel não for encontrado
     }
+    
 }

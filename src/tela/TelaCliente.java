@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +28,7 @@ public class TelaCliente extends javax.swing.JFrame {
     private boolean updateEnabled; 
     private long startTime;
     private int selectedRowIndex = -1;
+    private String tempoTexto;
     
     public TelaCliente() {
         initComponents();
@@ -43,7 +45,7 @@ public class TelaCliente extends javax.swing.JFrame {
         running = true;
         updateEnabled = true; // Inicialmente, a atualização está habilitada
         startTime = System.currentTimeMillis(); // Inicializa o startTime com o momento atual
-        startDataUpdateThread();
+        //startDataUpdateThread();
         
     tabelaCliente.addMouseListener(new MouseAdapter() {
     @Override
@@ -88,14 +90,16 @@ public class TelaCliente extends javax.swing.JFrame {
     }
     
       private void startDataUpdateThread() {
-        Thread thread = new Thread(() -> {
+          tempoTexto = TempoTexto.getText();
+          long tempoMilissegundos = Long.parseLong(tempoTexto);
+          Thread thread = new Thread(() -> {
             while (running) {
                 if (updateEnabled) {
                     updateTable();
                     updateExecutionTime();
                 }
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(tempoMilissegundos);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -166,6 +170,8 @@ public class TelaCliente extends javax.swing.JFrame {
         label1 = new java.awt.Label();
         tempo = new java.awt.Label();
         seed = new javax.swing.JButton();
+        TempoTexto = new javax.swing.JTextField();
+        IniciarTempoDaThread = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(170, 128, 255));
@@ -273,7 +279,7 @@ public class TelaCliente extends javax.swing.JFrame {
 
         label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Execução das Threads a cada 10s:");
+        label1.setText("Tempo de Execução das Threads:");
 
         tempo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tempo.setForeground(new java.awt.Color(255, 255, 255));
@@ -285,6 +291,18 @@ public class TelaCliente extends javax.swing.JFrame {
         seed.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seedActionPerformed(evt);
+            }
+        });
+
+        TempoTexto.setText("Tempo(milissegundos)");
+
+        IniciarTempoDaThread.setBackground(new java.awt.Color(102, 26, 255));
+        IniciarTempoDaThread.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        IniciarTempoDaThread.setForeground(new java.awt.Color(255, 255, 255));
+        IniciarTempoDaThread.setText("Vai!");
+        IniciarTempoDaThread.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IniciarTempoDaThreadActionPerformed(evt);
             }
         });
 
@@ -311,10 +329,15 @@ public class TelaCliente extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(1, 1, 1)
-                                .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(seed))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(seed, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(label1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(TempoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(IniciarTempoDaThread, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(7, 7, 7)
+                                .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 73, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -360,7 +383,11 @@ public class TelaCliente extends javax.swing.JFrame {
                         .addComponent(Telefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(seed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TempoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(IniciarTempoDaThread))
+                        .addGap(5, 5, 5)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(label1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tempo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -369,6 +396,8 @@ public class TelaCliente extends javax.swing.JFrame {
                         .addGap(0, 22, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        label1.getAccessibleContext().setAccessibleName("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -385,7 +414,8 @@ public class TelaCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarActionPerformed
-        selectedRowIndex = tabelaCliente.getSelectedRow(); // Armazena o índice da linha selecionada
+         selectedRowIndex = tabelaCliente.getSelectedRow(); // Armazena o índice da linha selecionada
+    
     if (selectedRowIndex != -1) { // Verifica se uma linha foi selecionada
         // Verifica se selectedRowIndex é válido
         if (selectedRowIndex < tableModel.getRowCount()) {
@@ -401,54 +431,61 @@ public class TelaCliente extends javax.swing.JFrame {
             tableModel.setValueAt(endereco, selectedRowIndex, 3);
             tableModel.setValueAt(telefone, selectedRowIndex, 4);
 
-            // Atualiza o cliente no banco de dados
-            Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
-            cliente.setIdCliente(Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString())); // Obtém o ID do cliente da tabela
-            ClienteDAO clienteDAO = new ClienteDAO();
-            int rowCount = clienteDAO.update(cliente);
+            // Criando e iniciando uma nova thread para atualizar o cliente no banco de dados
+            Thread thread = new Thread(() -> {
+                // Atualiza o cliente no banco de dados
+                Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
+                cliente.setIdCliente(Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString())); // Obtém o ID do cliente da tabela
+                ClienteDAO clienteDAO = new ClienteDAO();
+                int rowCount = clienteDAO.update(cliente);
 
-            // Mostra uma mensagem de sucesso ou erro
-            if (rowCount > 0) {
-                JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
-                startDataUpdateThread();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente!");
-                
-            }
+                // Mostra uma mensagem de sucesso ou erro
+                SwingUtilities.invokeLater(() -> {
+                    if (rowCount > 0) {
+                        JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+                        startDataUpdateThread();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente!");
+                    }
+                });
+            });
+            thread.start();
         } else {
             // Mostra uma mensagem de erro se selectedRowIndex for inválido
             JOptionPane.showMessageDialog(this, "Índice de linha inválido!");
-            
         }
     } else {
         // Mostra uma mensagem de erro se nenhuma linha foi selecionada
         JOptionPane.showMessageDialog(this, "Selecione um cliente para editar.");
-        
     }
     running = true;
     }//GEN-LAST:event_editarActionPerformed
 
     private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
-    // Obtendo o CPF digitado no campo de busca
-    
+        // Obtendo o CPF digitado no campo de busca
     running = false;
-    
     String cpfBusca = buscarCpf.getText();
     
-    // Buscando o cliente pelo CPF
-    Cliente clienteEncontrado = clienteDAO.buscarPorCPF(cpfBusca);// implemente o buscarPorCPF no clienteDAO
-    
-    // Verificando se o cliente foi encontrado
-    if (clienteEncontrado != null) {
-        // Limpa a tabela
-        tableModel.setRowCount(0);
-        // Adiciona o cliente encontrado à tabela
-        tableModel.addRow(new Object[]{clienteEncontrado.getIdCliente(), clienteEncontrado.getNome(), clienteEncontrado.getCpf(), clienteEncontrado.getEndereco(), clienteEncontrado.getTelefone()});
-    } else {
-        JOptionPane.showMessageDialog(this, "Cliente não encontrado!");
-         startDataUpdateThread();
-         running = true;
-    }
+    // Criando e iniciando uma nova thread para buscar o cliente pelo CPF
+    Thread thread = new Thread(() -> {
+        // Buscando o cliente pelo CPF
+        Cliente clienteEncontrado = clienteDAO.buscarPorCPF(cpfBusca);
+        
+        // Atualizando a interface do usuário com o resultado da busca
+        SwingUtilities.invokeLater(() -> {
+            if (clienteEncontrado != null) {
+                // Limpa a tabela
+                tableModel.setRowCount(0);
+                // Adiciona o cliente encontrado à tabela
+                tableModel.addRow(new Object[]{clienteEncontrado.getIdCliente(), clienteEncontrado.getNome(), clienteEncontrado.getCpf(), clienteEncontrado.getEndereco(), clienteEncontrado.getTelefone()});
+            } else {
+                JOptionPane.showMessageDialog(this, "Cliente não encontrado!");
+                startDataUpdateThread();
+            }
+            running = true;
+        });
+    });
+    thread.start();
     }//GEN-LAST:event_buscarActionPerformed
 
     private void voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voltarActionPerformed
@@ -459,7 +496,7 @@ public class TelaCliente extends javax.swing.JFrame {
 
     
     private void cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarActionPerformed
-        // Obtendo os dados dos campos de texto
+         // Obtendo os dados dos campos de texto
     String nome = Nome.getText();
     String cpf = Cpf.getText();
     String endereco = Endereco.getText();
@@ -468,45 +505,57 @@ public class TelaCliente extends javax.swing.JFrame {
     // Criando um objeto Cliente com os dados obtidos
     Cliente cliente = new Cliente(nome, cpf, endereco, telefone);
     
-    // Salvando o cliente no banco de dados
-    ClienteDAO clienteDAO = new ClienteDAO();
-    int rowCount = clienteDAO.insert(cliente);
-    
-    // Verificando se a inserção foi bem-sucedida
-    if (rowCount > 0) {
-        // Inserção bem-sucedida
-        JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
-        startDataUpdateThread();
-       
-    } else {
-        // Inserção falhou
-        JOptionPane.showMessageDialog(this, "Erro ao cadastrar cliente!");
-    }
-     running = true;
+    // Criando e iniciando uma nova thread para a inserção do cliente no banco de dados
+    Thread thread = new Thread(() -> {
+        // Salvando o cliente no banco de dados
+        ClienteDAO clienteDAO = new ClienteDAO();
+        int rowCount = clienteDAO.insert(cliente);
+        
+        // Verificando se a inserção foi bem-sucedida e exibindo uma mensagem adequada
+        SwingUtilities.invokeLater(() -> {
+            if (rowCount > 0) {
+                // Inserção bem-sucedida
+                JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
+                startDataUpdateThread();
+            } else {
+                // Inserção falhou
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar cliente!");
+            }
+        });
+    });
+    thread.start();
     }//GEN-LAST:event_cadastrarActionPerformed
 
     private void apagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apagarActionPerformed
-        selectedRowIndex = tabelaCliente.getSelectedRow(); // Armazena o índice da linha selecionada
+         selectedRowIndex = tabelaCliente.getSelectedRow(); // Armazena o índice da linha selecionada
+    
     if (selectedRowIndex != -1) { // Verifica se uma linha foi selecionada
         int idCliente = Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString()); // Obtém o ID do cliente da tabela
 
         int option = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir o cliente?", "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) { // Confirmação da exclusão
-            ClienteDAO clienteDAO = new ClienteDAO();
-            int rowCount = clienteDAO.delete(idCliente); // Exclui o cliente do banco de dados
+            // Criando e iniciando uma nova thread para excluir o cliente do banco de dados
+            Thread thread = new Thread(() -> {
+                ClienteDAO clienteDAO = new ClienteDAO();
+                int rowCount = clienteDAO.delete(idCliente); // Exclui o cliente do banco de dados
 
-            if (rowCount > 0) { // Verifica se a exclusão foi bem-sucedida
-                JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
-                updateTable(); // Atualiza a tabela para refletir a exclusão
-                startDataUpdateThread();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir cliente!");
-            }
+                // Mostra uma mensagem de sucesso ou erro
+                SwingUtilities.invokeLater(() -> {
+                    if (rowCount > 0) { // Verifica se a exclusão foi bem-sucedida
+                        JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+                        updateTable(); // Atualiza a tabela para refletir a exclusão
+                        startDataUpdateThread();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Erro ao excluir cliente!");
+                    }
+                });
+            });
+            thread.start();
         }
     } else {
         JOptionPane.showMessageDialog(this, "Selecione um cliente para excluir.");
     }
-    running = true;
+       running = true;
     }//GEN-LAST:event_apagarActionPerformed
 
     private void buscarCpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarCpfActionPerformed
@@ -524,34 +573,39 @@ public class TelaCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshActionPerformed
 
     private void seedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seedActionPerformed
-       Cliente cliente1 = new Cliente("João da Silva", "111.222.333-44", "Rua A, 123", "(00) 1234-5678");
-       Cliente cliente2 = new Cliente("Maria Oliveira", "222.333.444-55", "Avenida B, 456", "(00) 2345-6789");
-       Cliente cliente3 = new Cliente("Pedro Santos", "333.444.555-66", "Travessa C, 789", "(00) 3456-7890");
-       Cliente cliente4 = new Cliente("Ana Pereira", "444.555.666-77", "Praça D, 987", "(00) 4567-8901");
-       Cliente cliente5 = new Cliente("Lucas Souza", "555.666.777-88", "Rua E, 654", "(00) 5678-9012");
-       Cliente cliente6 = new Cliente("Carla Lima", "666.777.888-99", "Avenida F, 321", "(00) 6789-0123");
-       Cliente cliente7 = new Cliente("Marcos Costa", "777.888.999-00", "Travessa G, 654", "(00) 7890-1234");
-       Cliente cliente8 = new Cliente("Juliana Almeida", "888.999.000-11", "Praça H, 321", "(00) 8901-2345");
-       Cliente cliente9 = new Cliente("Luiza Fernandes", "999.000.111-22", "Rua I, 987", "(00) 9012-3456");
-       Cliente cliente10 = new Cliente("Rafael Oliveira", "000.111.222-33", "Avenida J, 456", "(00) 0123-4567");
-       
-       ClienteDAO clienteDAO = new ClienteDAO();
-       int rowCount1 = clienteDAO.insert(cliente1);
-       int rowCount2 = clienteDAO.insert(cliente2);
-       int rowCount3 = clienteDAO.insert(cliente3);
-       int rowCount4 = clienteDAO.insert(cliente4);
-       int rowCount5 = clienteDAO.insert(cliente5);
-       int rowCount6 = clienteDAO.insert(cliente6);
-       int rowCount7 = clienteDAO.insert(cliente7);
-       int rowCount8 = clienteDAO.insert(cliente8);
-       int rowCount9 = clienteDAO.insert(cliente9);
-       int rowCount10 = clienteDAO.insert(cliente10);
-       
-       JOptionPane.showMessageDialog(this, "SEED GERADA! Clientes cadastrados com sucesso!");
-       startDataUpdateThread();
-        
+       new Thread(() -> {
+        ClienteDAO clienteDAO = new ClienteDAO();
+        int totalClients = 200;
+        for (int i = 1; i <= totalClients; i++) {
+            Cliente cliente = new Cliente("Cliente " + i, "CPF " + i, "Endereço " + i, "Telefone " + i);
+            clienteDAO.insert(cliente);
+        }
+        JOptionPane.showMessageDialog(this, "SEED GERADA! " + totalClients + " clientes cadastrados com sucesso!");
+        startDataUpdateThread();
         running = true;
+    }).start();
     }//GEN-LAST:event_seedActionPerformed
+
+    private void IniciarTempoDaThreadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarTempoDaThreadActionPerformed
+        // Obtendo o tempo em milissegundos do campo de texto TempoTexto
+      tempoTexto = TempoTexto.getText();
+      long tempoMilissegundos = Long.parseLong(tempoTexto);
+
+    // Criando e iniciando uma nova thread para executar startDataUpdateThread() após o tempo especificado
+    Thread thread = new Thread(() -> {
+        try {
+            // Dormir a thread pelo tempo especificado
+            Thread.sleep(tempoMilissegundos);
+
+            // Executar startDataUpdateThread() após o tempo especificado
+            startDataUpdateThread();
+        } catch (InterruptedException ex) {
+            // Lidar com possíveis exceções de interrupção
+            ex.printStackTrace();
+        }
+    });
+    thread.start();
+    }//GEN-LAST:event_IniciarTempoDaThreadActionPerformed
 
     /**
      * @param args the command line arguments
@@ -592,8 +646,10 @@ public class TelaCliente extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField Cpf;
     private javax.swing.JTextField Endereco;
+    private javax.swing.JButton IniciarTempoDaThread;
     private javax.swing.JTextField Nome;
     private javax.swing.JTextField Telefone;
+    private javax.swing.JTextField TempoTexto;
     private javax.swing.JButton apagar;
     private javax.swing.JButton buscar;
     private javax.swing.JTextField buscarCpf;

@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import livro.Livro;
 
@@ -32,6 +33,7 @@ public class TelaAluguel extends javax.swing.JFrame {
     private boolean updateEnabled; 
     private long startTime;
     private int selectedRowIndex = -1;
+    private String tempoTexto;
     
     public TelaAluguel() {
     initComponents();
@@ -51,7 +53,6 @@ public class TelaAluguel extends javax.swing.JFrame {
     running = true;
     updateEnabled = true;
     startTime = System.currentTimeMillis();
-    startDataUpdateThread();
     
     // Adicionar um ouvinte de clique à tabela
     TabelaAluguel.addMouseListener(new MouseAdapter() {
@@ -90,6 +91,8 @@ public class TelaAluguel extends javax.swing.JFrame {
     }
     
     private void startDataUpdateThread() {
+        tempoTexto = TempoTexto.getText();
+        long tempoMilissegundos = Long.parseLong(tempoTexto);
         Thread thread = new Thread(() -> {
             while (running) {
                 if (updateEnabled) {
@@ -97,7 +100,7 @@ public class TelaAluguel extends javax.swing.JFrame {
                     updateExecutionTime();
                 }
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(tempoMilissegundos);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -145,6 +148,8 @@ public class TelaAluguel extends javax.swing.JFrame {
         Buscar = new javax.swing.JButton();
         refresh = new javax.swing.JButton();
         seed = new javax.swing.JButton();
+        TempoTexto = new javax.swing.JTextField();
+        IniciarTempoDaThread = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(170, 128, 255));
@@ -201,7 +206,7 @@ public class TelaAluguel extends javax.swing.JFrame {
 
         label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Execução das Threads a cada 10s:");
+        label1.setText("Tempo de Execução das Threads:");
 
         CodigoCliente.setText("Código do Cliente");
 
@@ -248,6 +253,18 @@ public class TelaAluguel extends javax.swing.JFrame {
             }
         });
 
+        TempoTexto.setText("Tempo(milissegundos)");
+
+        IniciarTempoDaThread.setBackground(new java.awt.Color(102, 26, 255));
+        IniciarTempoDaThread.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        IniciarTempoDaThread.setForeground(new java.awt.Color(255, 255, 255));
+        IniciarTempoDaThread.setText("Vai!");
+        IniciarTempoDaThread.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IniciarTempoDaThreadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -266,7 +283,7 @@ public class TelaAluguel extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGap(0, 1, Short.MAX_VALUE)
                                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(CodigoCliente)
                                     .addComponent(CodigoLivro, javax.swing.GroupLayout.Alignment.LEADING)
@@ -282,13 +299,19 @@ public class TelaAluguel extends javax.swing.JFrame {
                             .addComponent(jScrollPane2)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(buscarCodigoAluguel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                                 .addComponent(Buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(219, 219, 219)
-                        .addComponent(tempo)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(TempoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(IniciarTempoDaThread, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(219, 219, 219)
+                                .addComponent(tempo)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -320,6 +343,10 @@ public class TelaAluguel extends javax.swing.JFrame {
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(seed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TempoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(IniciarTempoDaThread))
                         .addContainerGap())))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
@@ -342,67 +369,38 @@ public class TelaAluguel extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 302, Short.MAX_VALUE)
+            .addGap(0, 323, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, Short.MAX_VALUE))
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void seedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seedActionPerformed
-
-        Cliente cliente = new Cliente();
-        Livro livro = new Livro();
-
-        cliente.setIdCliente(1);
-        livro.setIdLivro(2);
-
-        Aluguel aluguel1 = new Aluguel(cliente, livro, "24/04/2024", "30/04/2024");
-
-        Cliente cliente2 = new Cliente();
-        Livro livro2 = new Livro();
-
-        cliente2.setIdCliente(3);
-        livro2.setIdLivro(4);
-
-        Aluguel aluguel2 = new Aluguel(cliente2, livro2, "24/03/2024", "29/03/2024");
-
-        Cliente cliente3 = new Cliente();
-        Livro livro3 = new Livro();
-
-        cliente3.setIdCliente(4);
-        livro3.setIdLivro(5);
-
-        Aluguel aluguel3 = new Aluguel(cliente3, livro3, "15/03/2024", "20/03/2024");
-
-        Cliente cliente4 = new Cliente();
-        Livro livro4 = new Livro();
-
-        cliente4.setIdCliente(5);
-        livro4.setIdLivro(6);
-
-        Aluguel aluguel4 = new Aluguel(cliente4, livro4, "15/04/2024", "01/05/2024");
-
-        Cliente cliente5 = new Cliente();
-        Livro livro5 = new Livro();
-
-        cliente4.setIdCliente(7);
-        livro4.setIdLivro(8);
-
-        Aluguel aluguel5 = new Aluguel(cliente5, livro5, "01/04/2024", "15/04/2024");
-
+         new Thread(() -> {
         AluguelDAO aluguelDAO = new AluguelDAO();
-        int rowCount1 = aluguelDAO.alugarLivro(aluguel1, cliente.getIdCliente(), livro.getIdLivro());
-        int rowCount2 = aluguelDAO.alugarLivro(aluguel2, cliente2.getIdCliente(), livro2.getIdLivro());
-        int rowCount3 = aluguelDAO.alugarLivro(aluguel3, cliente3.getIdCliente(), livro3.getIdLivro());
-        int rowCount4 = aluguelDAO.alugarLivro(aluguel4, cliente4.getIdCliente(), livro4.getIdLivro());
-        int rowCount5 = aluguelDAO.alugarLivro(aluguel5, cliente5.getIdCliente(), livro5.getIdLivro());
 
-        JOptionPane.showMessageDialog(this, "SEED GERADA! Livros alugados com sucesso!");
+        for (int i = 1; i <= 50; i++) {
+            Cliente cliente = new Cliente();
+            Livro livro = new Livro();
+
+            cliente.setIdCliente(i);
+            livro.setIdLivro(i + 1);
+
+            String dataAluguel = "24/04/2024"; // data de aluguel fictícia
+            String dataDevolucao = "30/04/2024"; // data de devolução fictícia
+
+            Aluguel aluguel = new Aluguel(cliente, livro, dataAluguel, dataDevolucao);
+            aluguelDAO.alugarLivro(aluguel, cliente.getIdCliente(), livro.getIdLivro());
+        }
+
+        JOptionPane.showMessageDialog(this, "SEED GERADA! 50 livros alugados com sucesso!");
         startDataUpdateThread();
-
         running = true;
+    }).start();
     }//GEN-LAST:event_seedActionPerformed
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
@@ -412,7 +410,28 @@ public class TelaAluguel extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshActionPerformed
 
     private void BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarActionPerformed
+         // Criar e iniciar uma nova thread para realizar a busca do código do aluguel
+    Thread thread = new Thread(() -> {
+        // Obtendo os IDs do cliente e do livro para buscar o código do aluguel
+        int aluguelId = Integer.parseInt(buscarCodigoAluguel.getText());
 
+        // Chamando o método para buscar o código do aluguel
+        AluguelDAO aluguelDAO = new AluguelDAO();
+        Aluguel codigoAluguel = aluguelDAO.buscarAluguel(aluguelId);
+
+        // Atualizando a interface do usuário com o resultado da busca
+        SwingUtilities.invokeLater(() -> {
+            if (codigoAluguel != null) {
+               // Limpa a tabela
+                tableModel.setRowCount(0);
+                // Adiciona o cliente encontrado à tabela
+                tableModel.addRow(new Object[]{codigoAluguel.getIdAluguel(), codigoAluguel.getCliente().getIdCliente(), codigoAluguel.getLivro().getIdLivro(), codigoAluguel.getDataAluguel(), codigoAluguel.getDataDevolucao()});
+            } else {
+                JOptionPane.showMessageDialog(null, "Nenhum aluguel encontrado para o cliente e livro fornecidos.");
+            }
+        });
+    });
+    thread.start();
     }//GEN-LAST:event_BuscarActionPerformed
 
     private void DataAluguelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataAluguelActionPerformed
@@ -427,14 +446,16 @@ public class TelaAluguel extends javax.swing.JFrame {
 
     private void devolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolverActionPerformed
         // Verifica se uma linha foi selecionada na tabela
-        if (TabelaAluguel.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Por favor, selecione um aluguel para devolver.");
-            return;
-        }
+    if (TabelaAluguel.getSelectedRow() == -1) {
+        JOptionPane.showMessageDialog(null, "Por favor, selecione um aluguel para devolver.");
+        return;
+    }
 
-        // Obtém o índice da linha selecionada
-        int rowIndex = TabelaAluguel.getSelectedRow();
+    // Obtém o índice da linha selecionada
+    int rowIndex = TabelaAluguel.getSelectedRow();
 
+    // Criar e iniciar uma nova thread para realizar a operação de devolução
+    Thread thread = new Thread(() -> {
         try {
             // Obtém o ID do aluguel da linha selecionada
             int codigoAluguel = Integer.parseInt(tableModel.getValueAt(rowIndex, 0).toString());
@@ -442,25 +463,29 @@ public class TelaAluguel extends javax.swing.JFrame {
             // Chama o método para devolver o livro
             AluguelDAO aluguelDAO = new AluguelDAO();
             aluguelDAO.devolverLivro(codigoAluguel);
-            
-             JOptionPane.showMessageDialog(null, "Livro devolvido com sucesso!");
-            
-            // Atualiza a tabela após a devolução do livro
-            updateTable();
-            
+
+            // Atualiza a interface do usuário com a mensagem de sucesso e a tabela após a devolução do livro
+            SwingUtilities.invokeLater(() -> {
+                JOptionPane.showMessageDialog(null, "Livro devolvido com sucesso!");
+                updateTable();
+            });
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Por favor, insira um número válido para o código do aluguel.");
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Por favor, insira um número válido para o código do aluguel."));
         }
-          running = true;
+    });
+    thread.start();
+    running = true;
     }//GEN-LAST:event_devolverActionPerformed
 
     private void alugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alugarActionPerformed
-        // Obter o texto dos campos de texto
-        String textoCodigoCliente = CodigoCliente.getText();
-        String textoCodigoLivro = CodigoLivro.getText();
-        String dataAluguel = DataAluguel.getText(); // Obter data de aluguel do campo de texto
-        String dataDevolucao = DataDevolucao.getText(); // Obter data de devolução do campo de texto
+          // Obter o texto dos campos de texto
+    String textoCodigoCliente = CodigoCliente.getText();
+    String textoCodigoLivro = CodigoLivro.getText();
+    String dataAluguel = DataAluguel.getText(); // Obter data de aluguel do campo de texto
+    String dataDevolucao = DataDevolucao.getText(); // Obter data de devolução do campo de texto
 
+    // Criar e iniciar uma nova thread para realizar a operação de aluguel
+    Thread thread = new Thread(() -> {
         try {
             // Converter o texto para números inteiros
             int codigoCliente = Integer.parseInt(textoCodigoCliente);
@@ -472,12 +497,12 @@ public class TelaAluguel extends javax.swing.JFrame {
             int livroId = aluguelDAO.getIdLivroByCodigo(codigoLivro);
 
             if (clienteId == -1) {
-                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Cliente não encontrado."));
                 return; // Sai do método se o cliente não for encontrado
             }
 
             if (livroId == -1) {
-                JOptionPane.showMessageDialog(null, "Livro não encontrado.");
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Livro não encontrado."));
                 return; // Sai do método se o livro não for encontrado
             }
 
@@ -490,19 +515,44 @@ public class TelaAluguel extends javax.swing.JFrame {
             int rowCount = aluguelDAO.alugarLivro(aluguel, clienteId, livroId);
 
             if (rowCount > 0) {
-                JOptionPane.showMessageDialog(null, "Livro alugado com sucesso.");
-                // Limpar campos de texto
-                CodigoCliente.setText("");
-                CodigoLivro.setText("");
-                DataAluguel.setText("");
-                DataDevolucao.setText("");
+                SwingUtilities.invokeLater(() -> {
+                    JOptionPane.showMessageDialog(null, "Livro alugado com sucesso.");
+                    // Limpar campos de texto
+                    CodigoCliente.setText("");
+                    CodigoLivro.setText("");
+                    DataAluguel.setText("");
+                    DataDevolucao.setText("");
+                });
             } else {
-                JOptionPane.showMessageDialog(null, "Erro ao alugar o livro.");
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Erro ao alugar o livro."));
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Por favor, insira números válidos para o código do cliente e do livro.");
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Por favor, insira números válidos para o código do cliente e do livro."));
         }
+    });
+    thread.start();
     }//GEN-LAST:event_alugarActionPerformed
+
+    private void IniciarTempoDaThreadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarTempoDaThreadActionPerformed
+        // Obtendo o tempo em milissegundos do campo de texto TempoTexto
+        tempoTexto = TempoTexto.getText();
+        long tempoMilissegundos = Long.parseLong(tempoTexto);
+
+        // Criando e iniciando uma nova thread para executar startDataUpdateThread() após o tempo especificado
+        Thread thread = new Thread(() -> {
+            try {
+                // Dormir a thread pelo tempo especificado
+                Thread.sleep(tempoMilissegundos);
+
+                // Executar startDataUpdateThread() após o tempo especificado
+                startDataUpdateThread();
+            } catch (InterruptedException ex) {
+                // Lidar com possíveis exceções de interrupção
+                ex.printStackTrace();
+            }
+        });
+        thread.start();
+    }//GEN-LAST:event_IniciarTempoDaThreadActionPerformed
 
   // Método para atualizar a tabela com os dados dos aluguéis
 private void atualizarTabela() {
@@ -581,7 +631,9 @@ private void atualizarTabela() {
     private javax.swing.JTextField CodigoLivro;
     private javax.swing.JTextField DataAluguel;
     private javax.swing.JTextField DataDevolucao;
+    private javax.swing.JButton IniciarTempoDaThread;
     private javax.swing.JTable TabelaAluguel;
+    private javax.swing.JTextField TempoTexto;
     private javax.swing.JButton alugar;
     private javax.swing.JTextField buscarCodigoAluguel;
     private javax.swing.JButton devolver;

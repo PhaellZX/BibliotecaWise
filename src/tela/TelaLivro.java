@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import livro.Livro;
 import livro.LivroDAO;
@@ -29,8 +30,8 @@ public class TelaLivro extends javax.swing.JFrame {
    private boolean updateEnabled; 
    private long startTime;
    private int selectedRowIndex = -1;
+   private String tempoTexto;
    
-    
     public TelaLivro() {
         initComponents();
         setResizable(false);
@@ -47,7 +48,7 @@ public class TelaLivro extends javax.swing.JFrame {
         running = true;
         updateEnabled = true; // Inicialmente, a atualização está habilitada
         startTime = System.currentTimeMillis(); // Inicializa o startTime com o momento atual
-        startDataUpdateThread();
+        
         
         tabelaLivro.addMouseListener(new MouseAdapter() {
         @Override
@@ -90,14 +91,16 @@ public class TelaLivro extends javax.swing.JFrame {
     }
     
       private void startDataUpdateThread() {
-        Thread thread = new Thread(() -> {
+        tempoTexto = TempoTexto.getText();
+        long tempoMilissegundos = Long.parseLong(tempoTexto);
+          Thread thread = new Thread(() -> {
             while (running) {
                 if (updateEnabled) {
                     updateTable();
                     updateExecutionTime();
                 }
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(tempoMilissegundos);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -167,6 +170,8 @@ public class TelaLivro extends javax.swing.JFrame {
         tempo = new java.awt.Label();
         refresh = new javax.swing.JButton();
         seed = new javax.swing.JButton();
+        TempoTexto = new javax.swing.JTextField();
+        IniciarTempoDaThread = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -252,7 +257,7 @@ public class TelaLivro extends javax.swing.JFrame {
 
         label1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Execução das Threads a cada 10s:");
+        label1.setText("Tempo de Execução das Threads:");
 
         tempo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         tempo.setForeground(new java.awt.Color(255, 255, 255));
@@ -276,6 +281,18 @@ public class TelaLivro extends javax.swing.JFrame {
             }
         });
 
+        TempoTexto.setText("Tempo(milissegundos)");
+
+        IniciarTempoDaThread.setBackground(new java.awt.Color(102, 26, 255));
+        IniciarTempoDaThread.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        IniciarTempoDaThread.setForeground(new java.awt.Color(255, 255, 255));
+        IniciarTempoDaThread.setText("Vai!");
+        IniciarTempoDaThread.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IniciarTempoDaThreadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -287,7 +304,7 @@ public class TelaLivro extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 355, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(Genero)
@@ -300,16 +317,23 @@ public class TelaLivro extends javax.swing.JFrame {
                                     .addComponent(cadastrar, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
                                     .addComponent(apagar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(voltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(6, 6, 6))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(seed)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(6, 6, 6))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 101, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(TempoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(IniciarTempoDaThread, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(seed))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(BuscaTitulo)
@@ -323,38 +347,44 @@ public class TelaLivro extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(buscar)
                             .addComponent(BuscaTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(refresh))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(cadastrar)
-                                    .addComponent(AnoPublicacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(editar))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(apagar)
-                                    .addComponent(Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(voltar)
-                                    .addComponent(Genero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(refresh)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addGap(291, 291, 291)
-                        .addComponent(seed)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cadastrar)
+                            .addComponent(AnoPublicacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(editar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(apagar)
+                            .addComponent(Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(voltar)
+                            .addComponent(Genero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(seed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TempoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(IniciarTempoDaThread))
+                        .addGap(6, 6, 6)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tempo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(label1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -365,7 +395,7 @@ public class TelaLivro extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 846, Short.MAX_VALUE)
+            .addGap(0, 855, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -382,31 +412,37 @@ public class TelaLivro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarActionPerformed
-          // Obtendo os dados dos campos de texto
-        String titulo = Titulo.getText();
-        String autor = Autor.getText();
-        String anoPublicacao = AnoPublicacao.getText();
-        String genero = Genero.getText();
-        boolean disponivel = true;
-        
-        Livro livro = new Livro(anoPublicacao, titulo, autor, genero, disponivel);
-        
+         // Obtendo os dados dos campos de texto
+    String titulo = Titulo.getText();
+    String autor = Autor.getText();
+    String anoPublicacao = AnoPublicacao.getText();
+    String genero = Genero.getText();
+    boolean disponivel = true;
+
+    Livro livro = new Livro(anoPublicacao, titulo, autor, genero, disponivel);
+
+    // Criando e iniciando uma nova thread para a inserção do livro no banco de dados
+    Thread thread = new Thread(() -> {
         LivroDAO livroDAO = new LivroDAO();
         int rowCount = livroDAO.insert(livro);
-       // Verificando se a inserção foi bem-sucedida
-       if (rowCount > 0) {
-        // Inserção bem-sucedida
-        JOptionPane.showMessageDialog(this, "Livro cadastrado com sucesso!");
-        startDataUpdateThread();
-       } else {
-        // Inserção falhou
-        JOptionPane.showMessageDialog(this, "Erro ao cadastrar livro!");
-        }
-     running = true;
+
+        // Mostrando mensagem de sucesso ou erro na interface do usuário
+        SwingUtilities.invokeLater(() -> {
+            if (rowCount > 0) {
+                JOptionPane.showMessageDialog(this, "Livro cadastrado com sucesso!");
+                startDataUpdateThread();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar livro!");
+            }
+            running = true;
+        });
+    });
+    thread.start();
     }//GEN-LAST:event_cadastrarActionPerformed
 
     private void editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarActionPerformed
         selectedRowIndex = tabelaLivro.getSelectedRow(); // Armazena o índice da linha selecionada
+    
     if (selectedRowIndex != -1) { // Verifica se uma linha foi selecionada
         // Verifica se selectedRowIndex é válido
         if (selectedRowIndex < tableModel.getRowCount()) {
@@ -422,29 +458,32 @@ public class TelaLivro extends javax.swing.JFrame {
             tableModel.setValueAt(autor, selectedRowIndex, 3);
             tableModel.setValueAt(genero, selectedRowIndex, 4);
 
-            // Atualiza o cliente no banco de dados
-            Livro livro = new Livro(anoPublicacao, titulo, autor, genero);
-            livro.setIdLivro(Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString())); // Obtém o ID do cliente da tabela
-            LivroDAO livrpDAO = new LivroDAO();
-            int rowCount = livroDAO.update(livro);
+            // Criando e iniciando uma nova thread para atualizar o livro no banco de dados
+            Thread thread = new Thread(() -> {
+                // Atualiza o livro no banco de dados
+                Livro livro = new Livro(anoPublicacao, titulo, autor, genero);
+                livro.setIdLivro(Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString())); // Obtém o ID do livro da tabela
+                LivroDAO livroDAO = new LivroDAO();
+                int rowCount = livroDAO.update(livro);
 
-            // Mostra uma mensagem de sucesso ou erro
-            if (rowCount > 0) {
-                JOptionPane.showMessageDialog(this, "livro atualizado com sucesso!");
-                startDataUpdateThread();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao atualizar livro!");
-                
-            }
+                // Mostra uma mensagem de sucesso ou erro
+                SwingUtilities.invokeLater(() -> {
+                    if (rowCount > 0) {
+                        JOptionPane.showMessageDialog(this, "Livro atualizado com sucesso!");
+                        startDataUpdateThread();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Erro ao atualizar livro!");
+                    }
+                });
+            });
+            thread.start();
         } else {
             // Mostra uma mensagem de erro se selectedRowIndex for inválido
             JOptionPane.showMessageDialog(this, "Índice de linha inválido!");
-            
         }
     } else {
         // Mostra uma mensagem de erro se nenhuma linha foi selecionada
         JOptionPane.showMessageDialog(this, "Selecione um livro para editar.");
-        
     }
     running = true;
     }//GEN-LAST:event_editarActionPerformed
@@ -456,45 +495,57 @@ public class TelaLivro extends javax.swing.JFrame {
     }//GEN-LAST:event_voltarActionPerformed
 
     private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
-       // Obtendo o Titulo digitado no campo de busca
-    
+        // Obtendo o Título digitado no campo de busca
     running = false;
-    
     String buscaTitulo = BuscaTitulo.getText();
     
-    // Buscando o Livro pelo Titulo
-    Livro livroEncontrado = livroDAO.buscarPorTitulo(buscaTitulo);
-    
-    // Verificando se o livro foi encontrado
-    if (livroEncontrado != null) {
-        // Limpa a tabela
-        tableModel.setRowCount(0);
-        // Adiciona o livro encontrado à tabela
-        tableModel.addRow(new Object[]{livroEncontrado.getIdLivro(), livroEncontrado.getAnoPublicacao(), livroEncontrado.getTitulo(), livroEncontrado.getAutor(), livroEncontrado.getGenero(), livroEncontrado.isDisponivel()});
-    } else {
-        JOptionPane.showMessageDialog(this, "Livro não encontrado!");
-         startDataUpdateThread();
-         running = true;
-    }
+    // Criando e iniciando uma nova thread para buscar o livro pelo Título
+    Thread thread = new Thread(() -> {
+        // Buscando o livro pelo Título
+        Livro livroEncontrado = livroDAO.buscarPorTitulo(buscaTitulo);
+        
+        // Atualizando a interface do usuário com o resultado da busca
+        SwingUtilities.invokeLater(() -> {
+            if (livroEncontrado != null) {
+                // Limpa a tabela
+                tableModel.setRowCount(0);
+                // Adiciona o livro encontrado à tabela
+                tableModel.addRow(new Object[]{livroEncontrado.getIdLivro(), livroEncontrado.getAnoPublicacao(), livroEncontrado.getTitulo(), livroEncontrado.getAutor(), livroEncontrado.getGenero(), livroEncontrado.isDisponivel()});
+            } else {
+                JOptionPane.showMessageDialog(this, "Livro não encontrado!");
+                startDataUpdateThread();
+            }
+            running = true;
+        });
+    });
+    thread.start();
     }//GEN-LAST:event_buscarActionPerformed
 
     private void apagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apagarActionPerformed
         selectedRowIndex = tabelaLivro.getSelectedRow(); // Armazena o índice da linha selecionada
+    
     if (selectedRowIndex != -1) { // Verifica se uma linha foi selecionada
         int idLivro = Integer.parseInt(tableModel.getValueAt(selectedRowIndex, 0).toString()); // Obtém o ID do livro da tabela
 
         int option = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir o livro?", "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) { // Confirmação da exclusão
-            LivroDAO livroDAO = new LivroDAO();
-            int rowCount = livroDAO.delete(idLivro); // Exclui o cliente do banco de dados
+            // Criando e iniciando uma nova thread para excluir o livro do banco de dados
+            Thread thread = new Thread(() -> {
+                LivroDAO livroDAO = new LivroDAO();
+                int rowCount = livroDAO.delete(idLivro); // Exclui o livro do banco de dados
 
-            if (rowCount > 0) { // Verifica se a exclusão foi bem-sucedida
-                JOptionPane.showMessageDialog(this, "Livro excluído com sucesso!");
-                updateTable(); // Atualiza a tabela para refletir a exclusão
-                startDataUpdateThread();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir livro!");
-            }
+                // Mostra uma mensagem de sucesso ou erro
+                SwingUtilities.invokeLater(() -> {
+                    if (rowCount > 0) { // Verifica se a exclusão foi bem-sucedida
+                        JOptionPane.showMessageDialog(this, "Livro excluído com sucesso!");
+                        updateTable(); // Atualiza a tabela para refletir a exclusão
+                        startDataUpdateThread();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Erro ao excluir livro!");
+                    }
+                });
+            });
+            thread.start();
         }
     } else {
         JOptionPane.showMessageDialog(this, "Selecione um livro para excluir.");
@@ -509,34 +560,40 @@ public class TelaLivro extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshActionPerformed
 
     private void seedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seedActionPerformed
-        Livro livro1 = new Livro("2020", "Dom Casmurro", "Machado de Assis", "Romance",true);
-        Livro livro2 = new Livro("2005", "Harry Potter e a Pedra Filosofal", "J.K. Rowling", "Fantasia",true);
-        Livro livro3 = new Livro("1949", "1984", "George Orwell", "Ficção Científica", true);
-        Livro livro4 = new Livro("2020", "Dom Casmurro", "Machado de Assis", "Romance",true);
-        Livro livro5 = new Livro("1954", "O Senhor dos Anéis", "J.R.R. Tolkien", "Fantasia", true);
-        Livro livro6 = new Livro("1865", "Alice no País das Maravilhas", "Lewis Carroll", "Fantasia", true);
-        Livro livro7 = new Livro("2003", "O Código Da Vinci", "Dan Brown", "Suspense", true);
-        Livro livro8 = new Livro("1925", "O Grande Gatsby", "F. Scott Fitzgerald", "Ficção", true);
-        Livro livro9 = new Livro("1960", "O Médico e o Monstro", "Robert Louis Stevenson", "Terror", true);
-        Livro livro10 = new Livro("1818", "Frankenstein", "Mary Shelley", "Ficção Científica", true);
-        
-         LivroDAO livroDAO = new LivroDAO();
-       int rowCount1 = livroDAO.insert(livro1);
-       int rowCount2 = livroDAO.insert(livro2);
-       int rowCount3 = livroDAO.insert(livro3);
-       int rowCount4 = livroDAO.insert(livro4);
-       int rowCount5 = livroDAO.insert(livro5);
-       int rowCount6 = livroDAO.insert(livro6);
-       int rowCount7 = livroDAO.insert(livro7);
-       int rowCount8 = livroDAO.insert(livro8);
-       int rowCount9 = livroDAO.insert(livro9);
-       int rowCount10 = livroDAO.insert(livro10);
-       
-       JOptionPane.showMessageDialog(this, "SEED GERADA! Livros cadastrados com sucesso!");
-       startDataUpdateThread();
-        
+         new Thread(() -> {
+        LivroDAO livroDAO = new LivroDAO();
+
+        for (int i = 1; i <= 200; i++) {
+            Livro livro = new Livro("Ano" + i, "Livro " + i, "Autor " + i, "Gênero " + i, true);
+            livroDAO.insert(livro);
+        }
+
+        JOptionPane.showMessageDialog(this, "SEED GERADA! 200 livros cadastrados com sucesso!");
+        startDataUpdateThread();
         running = true;
+    }).start();
     }//GEN-LAST:event_seedActionPerformed
+
+    private void IniciarTempoDaThreadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarTempoDaThreadActionPerformed
+        // Obtendo o tempo em milissegundos do campo de texto TempoTexto
+        tempoTexto = TempoTexto.getText();
+        long tempoMilissegundos = Long.parseLong(tempoTexto);
+
+        // Criando e iniciando uma nova thread para executar startDataUpdateThread() após o tempo especificado
+        Thread thread = new Thread(() -> {
+            try {
+                // Dormir a thread pelo tempo especificado
+                Thread.sleep(tempoMilissegundos);
+
+                // Executar startDataUpdateThread() após o tempo especificado
+                startDataUpdateThread();
+            } catch (InterruptedException ex) {
+                // Lidar com possíveis exceções de interrupção
+                ex.printStackTrace();
+            }
+        });
+        thread.start();
+    }//GEN-LAST:event_IniciarTempoDaThreadActionPerformed
     
      private void exibirDadosLivros() {
         // Limpa os dados existentes na tabela
@@ -590,6 +647,8 @@ public class TelaLivro extends javax.swing.JFrame {
     private javax.swing.JTextField Autor;
     private javax.swing.JTextField BuscaTitulo;
     private javax.swing.JTextField Genero;
+    private javax.swing.JButton IniciarTempoDaThread;
+    private javax.swing.JTextField TempoTexto;
     private javax.swing.JTextField Titulo;
     private javax.swing.JButton apagar;
     private javax.swing.JButton buscar;
