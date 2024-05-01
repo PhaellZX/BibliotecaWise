@@ -68,11 +68,18 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="label1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="seed" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="label1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="TempoTexto" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="IniciarTempoDaThread" min="-2" pref="51" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                                   <Component id="tempo" min="-2" pref="77" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="seed" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="73" max="32767" attributes="0"/>
                       </Group>
@@ -131,7 +138,12 @@
                           <Component id="Telefone" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="seed" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="TempoTexto" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="IniciarTempoDaThread" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="label1" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="tempo" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -325,8 +337,11 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Execu&#xe7;&#xe3;o das Threads a cada 10s:"/>
+            <Property name="text" type="java.lang.String" value="Tempo de Execu&#xe7;&#xe3;o das Threads:"/>
           </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+          </AccessibilityProperties>
         </Component>
         <Component class="java.awt.Label" name="tempo">
           <Properties>
@@ -353,6 +368,28 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="seedActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="TempoTexto">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Tempo(milissegundos)"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="IniciarTempoDaThread">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="1a" red="66" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Vai!"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="IniciarTempoDaThreadActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
