@@ -67,9 +67,9 @@ O botão "Gerar Seed" serve para armazenar o conjunto de dados no banco de dados
 
 O botão de Refresh serve para atualizar os dados da tabela, caso necessário.
 
-![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/e5d063bb-5888-4cf8-9d44-8b1bbf650afd)
+![image](https://github.com/PhaellZX/BibliotecaWise/assets/48337836/1f38547d-ed57-47ec-a4e5-4eba1ad31d4f)
 
-Atualização dos dados a cada 10 segundos.
+Definir o tempo da thread.
 
 
 
